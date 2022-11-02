@@ -1,8 +1,8 @@
-cmd_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := arm-linux-gnueabi-gcc -Wp,-MD,/home/indream/esp-hosted/esp_hosted_ng/host/spi/.esp_spi.o.d  -nostdinc -isystem /usr/lib/gcc-cross/arm-linux-gnueabi/7/include -I./arch/arm/include -I./arch/arm/include/generated  -I./include -I./arch/arm/include/uapi -I./arch/arm/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -include ./include/linux/compiler_types.h -D__KERNEL__ -mlittle-endian -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Werror=return-type -Wno-format-security -std=gnu89 -fno-dwarf2-cfi-asm -fno-ipa-sra -mabi=aapcs-linux -mfpu=vfp -funwind-tables -marm -Wa,-mno-warn-deprecated -D__LINUX_ARM_ARCH__=5 -march=armv5te -mtune=arm9tdmi -msoft-float -Uarm -fno-delete-null-pointer-checks -Wno-frame-address -Wno-format-truncation -Wno-format-overflow -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fstack-protector-strong -Wno-unused-but-set-variable -Wimplicit-fallthrough -Wno-unused-const-variable -fomit-frame-pointer -fno-var-tracking-assignments -Wdeclaration-after-statement -Wvla -Wno-pointer-sign -Wno-array-bounds -Wno-stringop-overflow -Wno-restrict -Wno-maybe-uninitialized -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -I/home/indream/esp-hosted/esp_hosted_ng/host/include -I/home/indream/esp-hosted/esp_hosted_ng/host -I/home/indream/esp-hosted/esp_hosted_ng/host/spi  -DMODULE  -DKBUILD_BASENAME='"esp_spi"' -DKBUILD_MODNAME='"esp32_spi"' -c -o /home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o /home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.c
+cmd_/home/indream/esp-hosted/esp_hosted_ng/host/sdio/esp_sdio_api.o := arm-linux-gnueabi-gcc -Wp,-MD,/home/indream/esp-hosted/esp_hosted_ng/host/sdio/.esp_sdio_api.o.d  -nostdinc -isystem /usr/lib/gcc-cross/arm-linux-gnueabi/7/include -I./arch/arm/include -I./arch/arm/include/generated  -I./include -I./arch/arm/include/uapi -I./arch/arm/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -include ./include/linux/compiler_types.h -D__KERNEL__ -mlittle-endian -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Werror=return-type -Wno-format-security -std=gnu89 -fno-dwarf2-cfi-asm -fno-ipa-sra -mabi=aapcs-linux -mfpu=vfp -funwind-tables -marm -Wa,-mno-warn-deprecated -D__LINUX_ARM_ARCH__=5 -march=armv5te -mtune=arm9tdmi -msoft-float -Uarm -fno-delete-null-pointer-checks -Wno-frame-address -Wno-format-truncation -Wno-format-overflow -O2 --param=allow-store-data-races=0 -Wframe-larger-than=1024 -fstack-protector-strong -Wno-unused-but-set-variable -Wimplicit-fallthrough -Wno-unused-const-variable -fomit-frame-pointer -fno-var-tracking-assignments -Wdeclaration-after-statement -Wvla -Wno-pointer-sign -Wno-array-bounds -Wno-stringop-overflow -Wno-restrict -Wno-maybe-uninitialized -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init -I/home/indream/esp-hosted/esp_hosted_ng/host/include -I/home/indream/esp-hosted/esp_hosted_ng/host -I/home/indream/esp-hosted/esp_hosted_ng/host/sdio  -DMODULE  -DKBUILD_BASENAME='"esp_sdio_api"' -DKBUILD_MODNAME='"esp32_sdio"' -c -o /home/indream/esp-hosted/esp_hosted_ng/host/sdio/esp_sdio_api.o /home/indream/esp-hosted/esp_hosted_ng/host/sdio/esp_sdio_api.c
 
-source_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := /home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.c
+source_/home/indream/esp-hosted/esp_hosted_ng/host/sdio/esp_sdio_api.o := /home/indream/esp-hosted/esp_hosted_ng/host/sdio/esp_sdio_api.c
 
-deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := \
+deps_/home/indream/esp-hosted/esp_hosted_ng/host/sdio/esp_sdio_api.o := \
   include/linux/kconfig.h \
     $(wildcard include/config/cpu/big/endian.h) \
     $(wildcard include/config/booger.h) \
@@ -17,6 +17,8 @@ deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := \
     $(wildcard include/config/arm64.h) \
     $(wildcard include/config/retpoline.h) \
     $(wildcard include/config/arch/use/builtin/bswap.h) \
+  include/linux/mmc/sdio.h \
+  include/linux/mmc/sdio_func.h \
   include/linux/device.h \
     $(wildcard include/config/acpi.h) \
     $(wildcard include/config/debug/devres.h) \
@@ -585,15 +587,113 @@ deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := \
     $(wildcard include/config/arm/dma/use/iommu.h) \
     $(wildcard include/config/arch/omap.h) \
   include/linux/pm_wakeup.h \
-  include/linux/spi/spi.h \
-    $(wildcard include/config/spi/slave.h) \
-    $(wildcard include/config/spi.h) \
   include/linux/mod_devicetable.h \
   include/linux/uuid.h \
   include/uapi/linux/uuid.h \
+  include/linux/mmc/pm.h \
+  include/linux/mmc/sdio_ids.h \
+  include/linux/mmc/card.h \
+  include/linux/mmc/host.h \
+    $(wildcard include/config/regulator.h) \
+    $(wildcard include/config/fail/mmc/request.h) \
+  include/linux/fault-inject.h \
+    $(wildcard include/config/fault/injection/debug/fs.h) \
+    $(wildcard include/config/failslab.h) \
+  include/linux/mmc/core.h \
+  include/linux/dma-direction.h \
+  /home/indream/esp-hosted/esp_hosted_ng/host/sdio/esp_sdio_api.h \
+  /home/indream/esp-hosted/esp_hosted_ng/host/sdio/esp_sdio_decl.h \
+  /home/indream/esp-hosted/esp_hosted_ng/host/include/esp.h \
+    $(wildcard include/config/idf/firmware/chip/id.h) \
+  include/linux/interrupt.h \
+    $(wildcard include/config/irq/forced/threading.h) \
+    $(wildcard include/config/generic/irq/probe.h) \
+    $(wildcard include/config/proc/fs.h) \
+    $(wildcard include/config/irq/timings.h) \
+  include/linux/irqreturn.h \
+  include/linux/irqnr.h \
+  include/uapi/linux/irqnr.h \
+  include/linux/hardirq.h \
+  include/linux/ftrace_irq.h \
+    $(wildcard include/config/ftrace/nmi/enter.h) \
+    $(wildcard include/config/hwlat/tracer.h) \
+  include/linux/vtime.h \
+    $(wildcard include/config/virt/cpu/accounting.h) \
+    $(wildcard include/config/irq/time/accounting.h) \
+  include/linux/context_tracking_state.h \
+    $(wildcard include/config/context/tracking.h) \
+  include/linux/static_key.h \
+  include/linux/jump_label.h \
+    $(wildcard include/config/jump/label.h) \
+    $(wildcard include/config/have/arch/jump/label/relative.h) \
+  arch/arm/include/asm/hardirq.h \
+  arch/arm/include/asm/irq.h \
+    $(wildcard include/config/sparse/irq.h) \
+  include/linux/irq_cpustat.h \
+  arch/arm/include/asm/sections.h \
+  include/asm-generic/sections.h \
+  include/linux/netdevice.h \
+    $(wildcard include/config/dcb.h) \
+    $(wildcard include/config/hyperv/net.h) \
+    $(wildcard include/config/wlan.h) \
+    $(wildcard include/config/ax25.h) \
+    $(wildcard include/config/mac80211/mesh.h) \
+    $(wildcard include/config/net/ipip.h) \
+    $(wildcard include/config/net/ipgre.h) \
+    $(wildcard include/config/ipv6/sit.h) \
+    $(wildcard include/config/ipv6/tunnel.h) \
+    $(wildcard include/config/rps.h) \
+    $(wildcard include/config/netpoll.h) \
+    $(wildcard include/config/xps.h) \
+    $(wildcard include/config/xdp/sockets.h) \
+    $(wildcard include/config/bql.h) \
+    $(wildcard include/config/sysctl.h) \
+    $(wildcard include/config/rfs/accel.h) \
+    $(wildcard include/config/fcoe.h) \
+    $(wildcard include/config/xfrm/offload.h) \
+    $(wildcard include/config/net/poll/controller.h) \
+    $(wildcard include/config/libfcoe.h) \
+    $(wildcard include/config/wireless/ext.h) \
+    $(wildcard include/config/net/l3/master/dev.h) \
+    $(wildcard include/config/ipv6.h) \
+    $(wildcard include/config/tls/device.h) \
+    $(wildcard include/config/vlan/8021q.h) \
+    $(wildcard include/config/net/dsa.h) \
+    $(wildcard include/config/tipc.h) \
+    $(wildcard include/config/irda.h) \
+    $(wildcard include/config/atalk.h) \
+    $(wildcard include/config/decnet.h) \
+    $(wildcard include/config/mpls/routing.h) \
+    $(wildcard include/config/net/cls/act.h) \
+    $(wildcard include/config/netfilter/ingress.h) \
+    $(wildcard include/config/net/sched.h) \
+    $(wildcard include/config/garp.h) \
+    $(wildcard include/config/mrp.h) \
+    $(wildcard include/config/cgroup/net/prio.h) \
+    $(wildcard include/config/net/flow/limit.h) \
+  include/linux/delay.h \
+  arch/arm/include/asm/delay.h \
+  include/linux/dynamic_queue_limits.h \
+  include/linux/ethtool.h \
+  include/linux/compat.h \
+    $(wildcard include/config/arch/has/syscall/wrapper.h) \
+    $(wildcard include/config/x86/x32/abi.h) \
+    $(wildcard include/config/compat/old/sigaction.h) \
+    $(wildcard include/config/odd/rt/sigaction.h) \
+  include/linux/socket.h \
+  arch/arm/include/generated/uapi/asm/socket.h \
+  include/uapi/asm-generic/socket.h \
+  arch/arm/include/generated/uapi/asm/sockios.h \
+  include/uapi/asm-generic/sockios.h \
+  include/uapi/linux/sockios.h \
+  include/linux/uio.h \
+    $(wildcard include/config/arch/has/uaccess/flushcache.h) \
+    $(wildcard include/config/arch/has/uaccess/mcsafe.h) \
+  include/crypto/hash.h \
+  include/linux/crypto.h \
+    $(wildcard include/config/crypto/stats.h) \
   include/linux/slab.h \
     $(wildcard include/config/debug/slab.h) \
-    $(wildcard include/config/failslab.h) \
     $(wildcard include/config/memcg/kmem.h) \
     $(wildcard include/config/have/hardened/usercopy/allocator.h) \
     $(wildcard include/config/slab.h) \
@@ -602,15 +702,117 @@ deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := \
   include/linux/percpu-refcount.h \
   include/linux/kasan.h \
     $(wildcard include/config/kasan/generic.h) \
-  include/linux/kthread.h \
-  include/linux/scatterlist.h \
-    $(wildcard include/config/need/sg/dma/length.h) \
-    $(wildcard include/config/debug/sg.h) \
-    $(wildcard include/config/sgl/alloc.h) \
-    $(wildcard include/config/arch/no/sg/chain.h) \
-    $(wildcard include/config/sg/pool.h) \
+  include/linux/uaccess.h \
+  arch/arm/include/asm/uaccess.h \
+    $(wildcard include/config/cpu/sw/domain/pan.h) \
+    $(wildcard include/config/cpu/use/domains.h) \
+    $(wildcard include/config/uaccess/with/memcpy.h) \
+  arch/arm/include/asm/domain.h \
+    $(wildcard include/config/io/36.h) \
+    $(wildcard include/config/cpu/cp15/mmu.h) \
+  arch/arm/include/generated/asm/extable.h \
+  include/asm-generic/extable.h \
+  include/uapi/linux/uio.h \
+  include/uapi/linux/socket.h \
+  include/uapi/linux/if.h \
+  include/uapi/linux/libc-compat.h \
+  include/uapi/linux/hdlc/ioctl.h \
+  include/linux/fs.h \
+    $(wildcard include/config/read/only/thp/for/fs.h) \
+    $(wildcard include/config/fs/posix/acl.h) \
+    $(wildcard include/config/cgroup/writeback.h) \
+    $(wildcard include/config/ima.h) \
+    $(wildcard include/config/file/locking.h) \
+    $(wildcard include/config/fsnotify.h) \
+    $(wildcard include/config/fs/encryption.h) \
+    $(wildcard include/config/fs/verity.h) \
+    $(wildcard include/config/epoll.h) \
+    $(wildcard include/config/quota.h) \
+    $(wildcard include/config/fs/dax.h) \
+    $(wildcard include/config/mandatory/file/locking.h) \
+    $(wildcard include/config/migration.h) \
+    $(wildcard include/config/io/uring.h) \
+  include/linux/wait_bit.h \
+  include/linux/kdev_t.h \
+  include/uapi/linux/kdev_t.h \
+  include/linux/dcache.h \
+  include/linux/rculist_bl.h \
+  include/linux/list_bl.h \
+  include/linux/bit_spinlock.h \
+  include/linux/lockref.h \
+    $(wildcard include/config/arch/use/cmpxchg/lockref.h) \
+  include/linux/stringhash.h \
+    $(wildcard include/config/dcache/word/access.h) \
+  include/linux/hash.h \
+    $(wildcard include/config/have/arch/hash.h) \
+  include/linux/path.h \
+  include/linux/list_lru.h \
+  include/linux/shrinker.h \
+  include/linux/capability.h \
+  include/uapi/linux/capability.h \
+  include/linux/semaphore.h \
+  include/linux/fcntl.h \
+    $(wildcard include/config/arch/32bit/off/t.h) \
+  include/uapi/linux/fcntl.h \
+  arch/arm/include/uapi/asm/fcntl.h \
+  include/uapi/asm-generic/fcntl.h \
+  include/uapi/linux/fiemap.h \
+  include/linux/migrate_mode.h \
+  include/linux/percpu-rwsem.h \
+  include/linux/rcuwait.h \
+  include/linux/rcu_sync.h \
+  include/linux/delayed_call.h \
+  include/linux/errseq.h \
+  include/linux/ioprio.h \
+  include/linux/sched/rt.h \
+  include/linux/iocontext.h \
+  include/linux/fs_types.h \
+  include/uapi/linux/fs.h \
+  include/uapi/linux/ioctl.h \
+  arch/arm/include/generated/uapi/asm/ioctl.h \
+  include/asm-generic/ioctl.h \
+  include/uapi/asm-generic/ioctl.h \
+  include/linux/quota.h \
+    $(wildcard include/config/quota/netlink/interface.h) \
+  include/linux/percpu_counter.h \
+  include/uapi/linux/dqblk_xfs.h \
+  include/linux/dqblk_v1.h \
+  include/linux/dqblk_v2.h \
+  include/linux/dqblk_qtree.h \
+  include/linux/projid.h \
+  include/uapi/linux/quota.h \
+  include/linux/nfs_fs_i.h \
+  include/uapi/linux/aio_abi.h \
+  include/uapi/linux/unistd.h \
+  arch/arm/include/asm/unistd.h \
+    $(wildcard include/config/oabi/compat.h) \
+  arch/arm/include/uapi/asm/unistd.h \
+  arch/arm/include/generated/uapi/asm/unistd-eabi.h \
+  arch/arm/include/generated/uapi/asm/unistd-common.h \
+  arch/arm/include/generated/asm/unistd-nr.h \
+  arch/arm/include/generated/asm/compat.h \
+  include/asm-generic/compat.h \
+  include/uapi/linux/ethtool.h \
+  include/linux/if_ether.h \
+  include/linux/skbuff.h \
+    $(wildcard include/config/nf/conntrack.h) \
+    $(wildcard include/config/bridge/netfilter.h) \
+    $(wildcard include/config/net/tc/skb/ext.h) \
+    $(wildcard include/config/skb/extensions.h) \
+    $(wildcard include/config/ipv6/ndisc/nodetype.h) \
+    $(wildcard include/config/net/switchdev.h) \
+    $(wildcard include/config/net/redirect.h) \
+    $(wildcard include/config/net/rx/busy/poll.h) \
+    $(wildcard include/config/network/secmark.h) \
+    $(wildcard include/config/net.h) \
+    $(wildcard include/config/have/efficient/unaligned/access.h) \
+    $(wildcard include/config/network/phy/timestamping.h) \
+    $(wildcard include/config/xfrm.h) \
+    $(wildcard include/config/netfilter/xt/target/trace.h) \
+    $(wildcard include/config/nf/tables.h) \
+    $(wildcard include/config/ip/vs.h) \
+  include/linux/bvec.h \
   include/linux/mm.h \
-    $(wildcard include/config/sysctl.h) \
     $(wildcard include/config/have/arch/mmap/rnd/bits.h) \
     $(wildcard include/config/have/arch/mmap/rnd/compat/bits.h) \
     $(wildcard include/config/mem/soft/dirty.h) \
@@ -637,8 +839,6 @@ deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := \
     $(wildcard include/config/hibernation.h) \
     $(wildcard include/config/hugetlbfs.h) \
   include/linux/range.h \
-  include/linux/bit_spinlock.h \
-  include/linux/shrinker.h \
   include/linux/page_ext.h \
   include/linux/stacktrace.h \
     $(wildcard include/config/stacktrace.h) \
@@ -648,10 +848,6 @@ deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := \
   include/linux/page_ref.h \
     $(wildcard include/config/debug/page/ref.h) \
   include/linux/tracepoint-defs.h \
-  include/linux/static_key.h \
-  include/linux/jump_label.h \
-    $(wildcard include/config/jump/label.h) \
-    $(wildcard include/config/have/arch/jump/label/relative.h) \
   include/linux/memremap.h \
   arch/arm/include/asm/pgtable.h \
     $(wildcard include/config/highpte.h) \
@@ -705,69 +901,6 @@ deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := \
   include/linux/huge_mm.h \
   include/linux/sched/coredump.h \
     $(wildcard include/config/core/dump/default/elf/headers.h) \
-  include/linux/fs.h \
-    $(wildcard include/config/read/only/thp/for/fs.h) \
-    $(wildcard include/config/fs/posix/acl.h) \
-    $(wildcard include/config/cgroup/writeback.h) \
-    $(wildcard include/config/ima.h) \
-    $(wildcard include/config/file/locking.h) \
-    $(wildcard include/config/fsnotify.h) \
-    $(wildcard include/config/fs/encryption.h) \
-    $(wildcard include/config/fs/verity.h) \
-    $(wildcard include/config/epoll.h) \
-    $(wildcard include/config/quota.h) \
-    $(wildcard include/config/fs/dax.h) \
-    $(wildcard include/config/mandatory/file/locking.h) \
-    $(wildcard include/config/migration.h) \
-    $(wildcard include/config/io/uring.h) \
-  include/linux/wait_bit.h \
-  include/linux/kdev_t.h \
-  include/uapi/linux/kdev_t.h \
-  include/linux/dcache.h \
-  include/linux/rculist_bl.h \
-  include/linux/list_bl.h \
-  include/linux/lockref.h \
-    $(wildcard include/config/arch/use/cmpxchg/lockref.h) \
-  include/linux/stringhash.h \
-    $(wildcard include/config/dcache/word/access.h) \
-  include/linux/hash.h \
-    $(wildcard include/config/have/arch/hash.h) \
-  include/linux/path.h \
-  include/linux/list_lru.h \
-  include/linux/capability.h \
-  include/uapi/linux/capability.h \
-  include/linux/semaphore.h \
-  include/linux/fcntl.h \
-    $(wildcard include/config/arch/32bit/off/t.h) \
-  include/uapi/linux/fcntl.h \
-  arch/arm/include/uapi/asm/fcntl.h \
-  include/uapi/asm-generic/fcntl.h \
-  include/uapi/linux/fiemap.h \
-  include/linux/migrate_mode.h \
-  include/linux/percpu-rwsem.h \
-  include/linux/rcuwait.h \
-  include/linux/rcu_sync.h \
-  include/linux/delayed_call.h \
-  include/linux/errseq.h \
-  include/linux/ioprio.h \
-  include/linux/sched/rt.h \
-  include/linux/iocontext.h \
-  include/linux/fs_types.h \
-  include/uapi/linux/fs.h \
-  include/uapi/linux/ioctl.h \
-  arch/arm/include/generated/uapi/asm/ioctl.h \
-  include/asm-generic/ioctl.h \
-  include/uapi/asm-generic/ioctl.h \
-  include/linux/quota.h \
-    $(wildcard include/config/quota/netlink/interface.h) \
-  include/linux/percpu_counter.h \
-  include/uapi/linux/dqblk_xfs.h \
-  include/linux/dqblk_v1.h \
-  include/linux/dqblk_v2.h \
-  include/linux/dqblk_qtree.h \
-  include/linux/projid.h \
-  include/uapi/linux/quota.h \
-  include/linux/nfs_fs_i.h \
   include/linux/vmstat.h \
     $(wildcard include/config/vm/event/counters.h) \
     $(wildcard include/config/debug/tlbflush.h) \
@@ -775,214 +908,6 @@ deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := \
   include/linux/vm_event_item.h \
     $(wildcard include/config/memory/balloon.h) \
     $(wildcard include/config/balloon/compaction.h) \
-  arch/arm/include/asm/io.h \
-    $(wildcard include/config/pci.h) \
-    $(wildcard include/config/need/mach/io/h.h) \
-    $(wildcard include/config/pcmcia/soc/common.h) \
-    $(wildcard include/config/isa.h) \
-    $(wildcard include/config/pccard.h) \
-  include/asm-generic/pci_iomap.h \
-    $(wildcard include/config/no/generic/pci/ioport/map.h) \
-    $(wildcard include/config/generic/pci/iomap.h) \
-  include/asm-generic/io.h \
-    $(wildcard include/config/generic/iomap.h) \
-    $(wildcard include/config/has/ioport/map.h) \
-    $(wildcard include/config/virt/to/bus.h) \
-  include/linux/logic_pio.h \
-    $(wildcard include/config/indirect/pio.h) \
-  include/linux/fwnode.h \
-  include/linux/vmalloc.h \
-  include/linux/gpio/consumer.h \
-    $(wildcard include/config/gpiolib.h) \
-    $(wildcard include/config/of/gpio.h) \
-    $(wildcard include/config/gpio/sysfs.h) \
-  include/linux/gpio.h \
-    $(wildcard include/config/arch/have/custom/gpio/h.h) \
-  arch/arm/include/asm/gpio.h \
-    $(wildcard include/config/arch/nr/gpio.h) \
-  include/asm-generic/gpio.h \
-  include/linux/of.h \
-    $(wildcard include/config/of/dynamic.h) \
-    $(wildcard include/config/sparc.h) \
-    $(wildcard include/config/of/promtree.h) \
-    $(wildcard include/config/of/kobj.h) \
-    $(wildcard include/config/of/numa.h) \
-    $(wildcard include/config/of/overlay.h) \
-  include/linux/property.h \
-  include/linux/gpio/driver.h \
-    $(wildcard include/config/irq/domain/hierarchy.h) \
-    $(wildcard include/config/gpio/generic.h) \
-    $(wildcard include/config/gpiolib/irqchip.h) \
-  include/linux/irq.h \
-    $(wildcard include/config/generic/irq/effective/aff/mask.h) \
-    $(wildcard include/config/generic/irq/ipi.h) \
-    $(wildcard include/config/generic/irq/migration.h) \
-    $(wildcard include/config/generic/pending/irq.h) \
-    $(wildcard include/config/hardirqs/sw/resend.h) \
-    $(wildcard include/config/generic/irq/legacy/alloc/hwirq.h) \
-    $(wildcard include/config/generic/irq/legacy.h) \
-    $(wildcard include/config/generic/irq/multi/handler.h) \
-  include/linux/irqhandler.h \
-  include/linux/irqreturn.h \
-  include/linux/irqnr.h \
-  include/uapi/linux/irqnr.h \
-  include/linux/io.h \
-  arch/arm/include/asm/irq.h \
-    $(wildcard include/config/sparse/irq.h) \
-  arch/arm/include/generated/asm/irq_regs.h \
-  include/asm-generic/irq_regs.h \
-  include/linux/irqdesc.h \
-    $(wildcard include/config/irq/preflow/fasteoi.h) \
-    $(wildcard include/config/proc/fs.h) \
-    $(wildcard include/config/generic/irq/debugfs.h) \
-    $(wildcard include/config/handle/domain/irq.h) \
-    $(wildcard include/config/irq/domain.h) \
-  arch/arm/include/asm/hw_irq.h \
-  include/linux/irqchip/chained_irq.h \
-  include/linux/irqdomain.h \
-  include/linux/pinctrl/pinctrl.h \
-    $(wildcard include/config/generic/pinconf.h) \
-  include/linux/seq_file.h \
-  include/linux/cred.h \
-    $(wildcard include/config/debug/credentials.h) \
-  include/linux/key.h \
-    $(wildcard include/config/net.h) \
-  include/linux/sysctl.h \
-  include/uapi/linux/sysctl.h \
-  include/linux/assoc_array.h \
-    $(wildcard include/config/associative/array.h) \
-  include/linux/sched/user.h \
-    $(wildcard include/config/fanotify.h) \
-    $(wildcard include/config/posix/mqueue.h) \
-    $(wildcard include/config/bpf/syscall.h) \
-  include/linux/pinctrl/pinctrl-state.h \
-  include/linux/pinctrl/devinfo.h \
-  include/linux/pinctrl/consumer.h \
-  include/linux/pinctrl/pinconf-generic.h \
-  include/linux/pinctrl/machine.h \
-  include/linux/delay.h \
-  arch/arm/include/asm/delay.h \
-  /home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.h \
-  /home/indream/esp-hosted/esp_hosted_ng/host/include/esp.h \
-    $(wildcard include/config/idf/firmware/chip/id.h) \
-  include/linux/interrupt.h \
-    $(wildcard include/config/irq/forced/threading.h) \
-    $(wildcard include/config/generic/irq/probe.h) \
-    $(wildcard include/config/irq/timings.h) \
-  include/linux/hardirq.h \
-  include/linux/ftrace_irq.h \
-    $(wildcard include/config/ftrace/nmi/enter.h) \
-    $(wildcard include/config/hwlat/tracer.h) \
-  include/linux/vtime.h \
-    $(wildcard include/config/virt/cpu/accounting.h) \
-    $(wildcard include/config/irq/time/accounting.h) \
-  include/linux/context_tracking_state.h \
-    $(wildcard include/config/context/tracking.h) \
-  arch/arm/include/asm/hardirq.h \
-  include/linux/irq_cpustat.h \
-  arch/arm/include/asm/sections.h \
-  include/asm-generic/sections.h \
-  include/linux/netdevice.h \
-    $(wildcard include/config/dcb.h) \
-    $(wildcard include/config/hyperv/net.h) \
-    $(wildcard include/config/wlan.h) \
-    $(wildcard include/config/ax25.h) \
-    $(wildcard include/config/mac80211/mesh.h) \
-    $(wildcard include/config/net/ipip.h) \
-    $(wildcard include/config/net/ipgre.h) \
-    $(wildcard include/config/ipv6/sit.h) \
-    $(wildcard include/config/ipv6/tunnel.h) \
-    $(wildcard include/config/rps.h) \
-    $(wildcard include/config/netpoll.h) \
-    $(wildcard include/config/xps.h) \
-    $(wildcard include/config/xdp/sockets.h) \
-    $(wildcard include/config/bql.h) \
-    $(wildcard include/config/rfs/accel.h) \
-    $(wildcard include/config/fcoe.h) \
-    $(wildcard include/config/xfrm/offload.h) \
-    $(wildcard include/config/net/poll/controller.h) \
-    $(wildcard include/config/libfcoe.h) \
-    $(wildcard include/config/wireless/ext.h) \
-    $(wildcard include/config/net/l3/master/dev.h) \
-    $(wildcard include/config/ipv6.h) \
-    $(wildcard include/config/tls/device.h) \
-    $(wildcard include/config/vlan/8021q.h) \
-    $(wildcard include/config/net/dsa.h) \
-    $(wildcard include/config/tipc.h) \
-    $(wildcard include/config/irda.h) \
-    $(wildcard include/config/atalk.h) \
-    $(wildcard include/config/decnet.h) \
-    $(wildcard include/config/mpls/routing.h) \
-    $(wildcard include/config/net/cls/act.h) \
-    $(wildcard include/config/netfilter/ingress.h) \
-    $(wildcard include/config/net/sched.h) \
-    $(wildcard include/config/garp.h) \
-    $(wildcard include/config/mrp.h) \
-    $(wildcard include/config/cgroup/net/prio.h) \
-    $(wildcard include/config/net/flow/limit.h) \
-  include/linux/dynamic_queue_limits.h \
-  include/linux/ethtool.h \
-  include/linux/compat.h \
-    $(wildcard include/config/arch/has/syscall/wrapper.h) \
-    $(wildcard include/config/x86/x32/abi.h) \
-    $(wildcard include/config/compat/old/sigaction.h) \
-    $(wildcard include/config/odd/rt/sigaction.h) \
-  include/linux/socket.h \
-  arch/arm/include/generated/uapi/asm/socket.h \
-  include/uapi/asm-generic/socket.h \
-  arch/arm/include/generated/uapi/asm/sockios.h \
-  include/uapi/asm-generic/sockios.h \
-  include/uapi/linux/sockios.h \
-  include/linux/uio.h \
-    $(wildcard include/config/arch/has/uaccess/flushcache.h) \
-    $(wildcard include/config/arch/has/uaccess/mcsafe.h) \
-  include/crypto/hash.h \
-  include/linux/crypto.h \
-    $(wildcard include/config/crypto/stats.h) \
-  include/linux/uaccess.h \
-  arch/arm/include/asm/uaccess.h \
-    $(wildcard include/config/cpu/sw/domain/pan.h) \
-    $(wildcard include/config/cpu/use/domains.h) \
-    $(wildcard include/config/uaccess/with/memcpy.h) \
-  arch/arm/include/asm/domain.h \
-    $(wildcard include/config/io/36.h) \
-    $(wildcard include/config/cpu/cp15/mmu.h) \
-  arch/arm/include/generated/asm/extable.h \
-  include/asm-generic/extable.h \
-  include/uapi/linux/uio.h \
-  include/uapi/linux/socket.h \
-  include/uapi/linux/if.h \
-  include/uapi/linux/libc-compat.h \
-  include/uapi/linux/hdlc/ioctl.h \
-  include/uapi/linux/aio_abi.h \
-  include/uapi/linux/unistd.h \
-  arch/arm/include/asm/unistd.h \
-    $(wildcard include/config/oabi/compat.h) \
-  arch/arm/include/uapi/asm/unistd.h \
-  arch/arm/include/generated/uapi/asm/unistd-eabi.h \
-  arch/arm/include/generated/uapi/asm/unistd-common.h \
-  arch/arm/include/generated/asm/unistd-nr.h \
-  arch/arm/include/generated/asm/compat.h \
-  include/asm-generic/compat.h \
-  include/uapi/linux/ethtool.h \
-  include/linux/if_ether.h \
-  include/linux/skbuff.h \
-    $(wildcard include/config/nf/conntrack.h) \
-    $(wildcard include/config/bridge/netfilter.h) \
-    $(wildcard include/config/net/tc/skb/ext.h) \
-    $(wildcard include/config/skb/extensions.h) \
-    $(wildcard include/config/ipv6/ndisc/nodetype.h) \
-    $(wildcard include/config/net/switchdev.h) \
-    $(wildcard include/config/net/redirect.h) \
-    $(wildcard include/config/net/rx/busy/poll.h) \
-    $(wildcard include/config/network/secmark.h) \
-    $(wildcard include/config/have/efficient/unaligned/access.h) \
-    $(wildcard include/config/network/phy/timestamping.h) \
-    $(wildcard include/config/xfrm.h) \
-    $(wildcard include/config/netfilter/xt/target/trace.h) \
-    $(wildcard include/config/nf/tables.h) \
-    $(wildcard include/config/ip/vs.h) \
-  include/linux/bvec.h \
   include/linux/net.h \
   include/linux/random.h \
     $(wildcard include/config/arch/random.h) \
@@ -1003,7 +928,29 @@ deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := \
     $(wildcard include/config/need/dma/map/state.h) \
   include/linux/dma-debug.h \
     $(wildcard include/config/dma/api/debug.h) \
-  include/linux/dma-direction.h \
+  include/linux/scatterlist.h \
+    $(wildcard include/config/need/sg/dma/length.h) \
+    $(wildcard include/config/debug/sg.h) \
+    $(wildcard include/config/sgl/alloc.h) \
+    $(wildcard include/config/arch/no/sg/chain.h) \
+    $(wildcard include/config/sg/pool.h) \
+  arch/arm/include/asm/io.h \
+    $(wildcard include/config/pci.h) \
+    $(wildcard include/config/need/mach/io/h.h) \
+    $(wildcard include/config/pcmcia/soc/common.h) \
+    $(wildcard include/config/isa.h) \
+    $(wildcard include/config/pccard.h) \
+  include/asm-generic/pci_iomap.h \
+    $(wildcard include/config/no/generic/pci/ioport/map.h) \
+    $(wildcard include/config/generic/pci/iomap.h) \
+  include/asm-generic/io.h \
+    $(wildcard include/config/generic/iomap.h) \
+    $(wildcard include/config/has/ioport/map.h) \
+    $(wildcard include/config/virt/to/bus.h) \
+  include/linux/logic_pio.h \
+    $(wildcard include/config/indirect/pio.h) \
+  include/linux/fwnode.h \
+  include/linux/vmalloc.h \
   include/linux/mem_encrypt.h \
     $(wildcard include/config/arch/has/mem/encrypt.h) \
   arch/arm/include/asm/dma-mapping.h \
@@ -1038,6 +985,8 @@ deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := \
     $(wildcard include/config/can.h) \
     $(wildcard include/config/crypto/user.h) \
     $(wildcard include/config/net/ns.h) \
+  include/linux/sysctl.h \
+  include/uapi/linux/sysctl.h \
   include/net/netns/core.h \
   include/net/netns/mib.h \
     $(wildcard include/config/xfrm/statistics.h) \
@@ -1081,6 +1030,16 @@ deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := \
   include/net/netns/xdp.h \
   include/linux/ns_common.h \
   include/linux/seq_file_net.h \
+  include/linux/seq_file.h \
+  include/linux/cred.h \
+    $(wildcard include/config/debug/credentials.h) \
+  include/linux/key.h \
+  include/linux/assoc_array.h \
+    $(wildcard include/config/associative/array.h) \
+  include/linux/sched/user.h \
+    $(wildcard include/config/fanotify.h) \
+    $(wildcard include/config/posix/mqueue.h) \
+    $(wildcard include/config/bpf/syscall.h) \
   include/net/netprio_cgroup.h \
   include/linux/cgroup.h \
     $(wildcard include/config/cgroup/cpuacct.h) \
@@ -1109,6 +1068,7 @@ deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := \
   include/linux/file.h \
   include/linux/rbtree_latch.h \
   include/linux/psi_types.h \
+  include/linux/kthread.h \
   include/linux/cgroup_subsys.h \
     $(wildcard include/config/cgroup/device.h) \
     $(wildcard include/config/cgroup/freezer.h) \
@@ -1307,12 +1267,7 @@ deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o := \
   include/net/bluetooth/hci.h \
   include/net/bluetooth/hci_sock.h \
   /home/indream/esp-hosted/esp_hosted_ng/host/include/adapter.h \
-  /home/indream/esp-hosted/esp_hosted_ng/host/include/esp_if.h \
-  /home/indream/esp-hosted/esp_hosted_ng/host/include/esp.h \
-  /home/indream/esp-hosted/esp_hosted_ng/host/include/esp_api.h \
-  /home/indream/esp-hosted/esp_hosted_ng/host/include/esp_kernel_port.h \
-  include/generated/uapi/linux/version.h \
 
-/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o: $(deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o)
+/home/indream/esp-hosted/esp_hosted_ng/host/sdio/esp_sdio_api.o: $(deps_/home/indream/esp-hosted/esp_hosted_ng/host/sdio/esp_sdio_api.o)
 
-$(deps_/home/indream/esp-hosted/esp_hosted_ng/host/spi/esp_spi.o):
+$(deps_/home/indream/esp-hosted/esp_hosted_ng/host/sdio/esp_sdio_api.o):

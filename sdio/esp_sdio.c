@@ -23,17 +23,12 @@
 #include <linux/mmc/sdio_ids.h>
 #include <linux/mmc/card.h>
 #include <linux/mmc/host.h>
-#include <linux/timer.h>
 #include "esp_if.h"
 #include "esp_sdio_api.h"
 #include "esp_api.h"
 #include "esp_bt_api.h"
-#ifdef CONFIG_SUPPORT_ESP_SERIAL
-#include "esp_serial.h"
-#endif
 #include <linux/kthread.h>
 #include <linux/printk.h>
-#include "esp_stats.h"
 
 #define MAX_WRITE_RETRIES       2
 #define TX_MAX_PENDING_COUNT    200
@@ -63,27 +58,6 @@ static const struct sdio_device_id esp_devices[] = {
 	{ SDIO_DEVICE(ESP_VENDOR_ID, ESP_DEVICE_ID_2) },
 	{}
 };
-
-static void print_capabilities(u32 cap)
-{
-	printk(KERN_INFO "Features supported are:\n");
-	if (cap & ESP_WLAN_SDIO_SUPPORT)
-		printk(KERN_INFO "\t * WLAN\n");
-	if ((cap & ESP_BT_UART_SUPPORT) || (cap & ESP_BT_SDIO_SUPPORT)) {
-		printk(KERN_INFO "\t * BT/BLE\n");
-		if (cap & ESP_BT_UART_SUPPORT)
-			printk(KERN_INFO "\t   - HCI over UART\n");
-		if (cap & ESP_BT_SDIO_SUPPORT)
-			printk(KERN_INFO "\t   - HCI over SDIO\n");
-
-		if ((cap & ESP_BLE_ONLY_SUPPORT) && (cap & ESP_BR_EDR_ONLY_SUPPORT))
-			printk(KERN_INFO "\t   - BT/BLE dual mode\n");
-		else if (cap & ESP_BLE_ONLY_SUPPORT)
-			printk(KERN_INFO "\t   - BLE only\n");
-		else if (cap & ESP_BR_EDR_ONLY_SUPPORT)
-			printk(KERN_INFO "\t   - BR EDR only\n");
-	}
-}
 
 static void esp_process_interrupt(struct esp_sdio_context *context, u32 int_status)
 {
@@ -236,6 +210,7 @@ static int esp_get_len_from_slave(struct esp_sdio_context *context, u32 *rx_size
 }
 
 
+#if 0
 static void flush_sdio(struct esp_sdio_context *context)
 {
 	struct sk_buff *skb;
@@ -253,8 +228,10 @@ static void flush_sdio(struct esp_sdio_context *context)
 		if (skb->len)
 			printk (KERN_INFO "%s: Flushed %d bytes\n", __func__, skb->len);
 		dev_kfree_skb(skb);
+		skb = NULL;
 	}
 }
+#endif
 
 static void esp_remove(struct sdio_func *func)
 {
@@ -262,16 +239,15 @@ static void esp_remove(struct sdio_func *func)
 	uint8_t prio_q_idx = 0;
 	context = sdio_get_drvdata(func);
 
-	printk(KERN_INFO "%s -> Remove card", __func__);
-
-#ifdef CONFIG_SUPPORT_ESP_SERIAL
-	esp_serial_cleanup();
-#endif
-
 #ifdef CONFIG_ENABLE_MONITOR_PROCESS
 	if (monitor_thread)
 		kthread_stop(monitor_thread);
 #endif
+	if (context) {
+		context->state = ESP_CONTEXT_INIT;
+		for (prio_q_idx=0; prio_q_idx<MAX_PRIORITY_QUEUES; prio_q_idx++)
+			skb_queue_purge(&(sdio_context.tx_q[prio_q_idx]));
+	}
 
 	if (tx_thread)
 		kthread_stop(tx_thread);
@@ -280,7 +256,7 @@ static void esp_remove(struct sdio_func *func)
 		generate_slave_intr(context, BIT(ESP_CLOSE_DATA_PATH));
 		msleep(100);
 
-		flush_sdio(context);
+		context->state = ESP_CONTEXT_DISABLED;
 
 		if (context->adapter) {
 			esp_remove_card(context->adapter);
@@ -288,20 +264,15 @@ static void esp_remove(struct sdio_func *func)
 			if (context->adapter->hcidev) {
 				esp_deinit_bt(context->adapter);
 			}
-
-		}
-		for (prio_q_idx=0; prio_q_idx<MAX_PRIORITY_QUEUES; prio_q_idx++) {
-			skb_queue_purge(&(sdio_context.tx_q[prio_q_idx]));
 		}
 
+
+		if (context->func) {
+			deinit_sdio_func(context->func);
+			context->func = NULL;
+		}
 		memset(context, 0, sizeof(struct esp_sdio_context));
 	}
-
-	deinit_sdio_func(func);
-
-	printk (KERN_INFO "%s: Context deinit %d - %d\n", __func__, context->rx_byte_count,
-			context->tx_buffer_count);
-
 }
 
 static struct esp_if_ops if_ops = {
@@ -382,6 +353,11 @@ static struct sk_buff * read_packet(struct esp_adapter *adapter)
 
 	context = adapter->if_context;
 
+	if(!context ||  (context->state != ESP_CONTEXT_READY) || !context->func) {
+		printk(KERN_ERR "Invalid context/state\n");
+		return NULL;
+	}
+
 	sdio_claim_host(context->func);
 
 	data_left = len_to_read = len_from_slave = num_blocks = 0;
@@ -438,6 +414,7 @@ static struct sk_buff * read_packet(struct esp_adapter *adapter)
 		if (ret) {
 			printk (KERN_ERR "%s: Failed to read data - %d [%u - %d]\n", __func__, ret, num_blocks, len_to_read);
 			dev_kfree_skb(skb);
+			skb = NULL;
 			sdio_release_host(context->func);
 			return NULL;
 		}
@@ -456,13 +433,17 @@ static struct sk_buff * read_packet(struct esp_adapter *adapter)
 
 static int write_packet(struct esp_adapter *adapter, struct sk_buff *skb)
 {
-	u32 max_pkt_size = ESP_RX_BUFFER_SIZE;
+	u32 max_pkt_size = ESP_RX_BUFFER_SIZE - sizeof(struct esp_payload_header);
 	struct esp_payload_header *payload_header = (struct esp_payload_header *) skb->data;
+	struct esp_skb_cb * cb = NULL;
+	uint8_t prio = PRIO_Q_LOW;
 
 	if (!adapter || !adapter->if_context || !skb || !skb->data || !skb->len) {
 		printk(KERN_ERR "%s: Invalid args\n", __func__);
-		if(skb)
+		if(skb) {
 			dev_kfree_skb(skb);
+			skb = NULL;
+		}
 
 		return -EINVAL;
 	}
@@ -471,12 +452,16 @@ static int write_packet(struct esp_adapter *adapter, struct sk_buff *skb)
 		printk(KERN_ERR "%s: Drop pkt of len[%u] > max SDIO transport len[%u]\n",
 				__func__, skb->len, max_pkt_size);
 		dev_kfree_skb(skb);
+		skb = NULL;
 		return -EPERM;
 	}
 
-	if (atomic_read(&tx_pending) >= TX_MAX_PENDING_COUNT) {
-		esp_tx_pause();
+	cb = (struct esp_skb_cb *)skb->cb;
+	if (cb && cb->priv && (atomic_read(&tx_pending) >= TX_MAX_PENDING_COUNT)) {
+		esp_tx_pause(cb->priv);
 		dev_kfree_skb(skb);
+		skb = NULL;
+/*		printk(KERN_ERR "%s: TX Pause busy", __func__);*/
 		return -EBUSY;
 	}
 
@@ -484,37 +469,95 @@ static int write_packet(struct esp_adapter *adapter, struct sk_buff *skb)
 	atomic_inc(&tx_pending);
 
 	/* Notify to process queue */
-	if (payload_header->if_type == ESP_SERIAL_IF) {
-		atomic_inc(&queue_items[PRIO_Q_SERIAL]);
-		skb_queue_tail(&(sdio_context.tx_q[PRIO_Q_SERIAL]), skb);
-	} else if (payload_header->if_type == ESP_HCI_IF) {
-		atomic_inc(&queue_items[PRIO_Q_BT]);
-		skb_queue_tail(&(sdio_context.tx_q[PRIO_Q_BT]), skb);
-	} else {
-		atomic_inc(&queue_items[PRIO_Q_OTHERS]);
-		skb_queue_tail(&(sdio_context.tx_q[PRIO_Q_OTHERS]), skb);
-	}
+	if (payload_header->if_type == ESP_INTERNAL_IF)
+		prio = PRIO_Q_HIGH;
+	else if (payload_header->if_type == ESP_HCI_IF)
+		prio = PRIO_Q_MID;
+	else
+		prio = PRIO_Q_LOW;
+
+	atomic_inc(&queue_items[prio]);
+	skb_queue_tail(&(sdio_context.tx_q[prio]), skb);
 
 	return 0;
 }
 
-static int is_sdio_write_buffer_available(u32 buf_needed)
+static int tx_process(void *data)
 {
-#define BUFFER_AVAILABLE        1
-#define BUFFER_UNAVAILABLE      0
-
 	int ret = 0;
-	static u32 buf_available = 0;
-	struct esp_sdio_context *context = &sdio_context;
-	u8 retry = MAX_WRITE_RETRIES;
+	u32 block_cnt = 0;
+	u32 buf_needed = 0, buf_available = 0;
+	u8 *pos = NULL;
+	u32 data_left, len_to_send, pad;
+	struct sk_buff *tx_skb = NULL;
+	struct esp_adapter *adapter = (struct esp_adapter *) data;
+	struct esp_sdio_context *context = NULL;
+	struct esp_skb_cb * cb = NULL;
+	u8 retry;
 
-	/*If buffer needed are less than buffer available
-	  then only read for available buffer number from slave*/
-	if (buf_available < buf_needed) {
+	context = adapter->if_context;
+
+	while (!kthread_should_stop()) {
+
+		if (context->state != ESP_CONTEXT_READY) {
+			msleep(10);
+			printk(KERN_ERR "%s: not ready", __func__);
+			continue;
+		}
+
+		if (atomic_read(&queue_items[PRIO_Q_HIGH]) > 0) {
+			tx_skb = skb_dequeue(&(context->tx_q[PRIO_Q_HIGH]));
+			if (!tx_skb) {
+				continue;
+			}
+			atomic_dec(&queue_items[PRIO_Q_HIGH]);
+		} else if (atomic_read(&queue_items[PRIO_Q_MID]) > 0) {
+			tx_skb = skb_dequeue(&(context->tx_q[PRIO_Q_MID]));
+			if (!tx_skb) {
+				continue;
+			}
+			atomic_dec(&queue_items[PRIO_Q_MID]);
+		} else if (atomic_read(&queue_items[PRIO_Q_LOW]) > 0) {
+			tx_skb = skb_dequeue(&(context->tx_q[PRIO_Q_LOW]));
+			if (!tx_skb) {
+				continue;
+			}
+			atomic_dec(&queue_items[PRIO_Q_LOW]);
+		} else {
+#if 0
+			printk(KERN_ERR "%s: not ready 2 [%d %d]\n", __func__,
+					atomic_read(&queue_items[PRIO_Q_OTHERS]),
+					atomic_read(&queue_items[PRIO_Q_SERIAL]));
+#endif
+			msleep(1);
+			continue;
+		}
+
+		if (atomic_read(&tx_pending))
+			atomic_dec(&tx_pending);
+
+		retry = MAX_WRITE_RETRIES;
+
+		/* resume network tx queue if bearable load */
+		cb = (struct esp_skb_cb *)tx_skb->cb;
+		if (cb && cb->priv && atomic_read(&tx_pending) < TX_RESUME_THRESHOLD) {
+			esp_tx_resume(cb->priv);
+		}
+
+		buf_needed = (tx_skb->len + ESP_RX_BUFFER_SIZE - 1) / ESP_RX_BUFFER_SIZE;
+
 		while (retry) {
-			ret = esp_slave_get_tx_buffer_num(context, &buf_available, ACQUIRE_LOCK);
+			if (!context->func) {
+				retry = 0;
+				break;
+			}
+
+			sdio_claim_host(context->func);
+
+			ret = esp_slave_get_tx_buffer_num(context, &buf_available, LOCK_ALREADY_ACQUIRED);
 
 			if (buf_available < buf_needed) {
+				sdio_release_host(context->func);
 
 				/* Release SDIO and retry after delay*/
 				retry--;
@@ -524,77 +567,11 @@ static int is_sdio_write_buffer_available(u32 buf_needed)
 
 			break;
 		}
-	}
 
-	if (buf_available >= buf_needed)
-		buf_available -= buf_needed;
-
-	if (!retry) {
-		/* No buffer available at slave */
-		return BUFFER_UNAVAILABLE;
-	}
-
-	return BUFFER_AVAILABLE;
-}
-
-static int tx_process(void *data)
-{
-	int ret = 0;
-	u32 block_cnt = 0;
-	u32 buf_needed = 0;
-	u8 *pos = NULL;
-	u32 data_left, len_to_send, pad;
-	struct sk_buff *tx_skb = NULL;
-	struct esp_sdio_context *context = &sdio_context;
-
-	while (!kthread_should_stop()) {
-
-		if (context->state != ESP_CONTEXT_READY) {
-			msleep(10);
-			continue;
-		}
-
-		if (atomic_read(&queue_items[PRIO_Q_SERIAL]) > 0) {
-			tx_skb = skb_dequeue(&(context->tx_q[PRIO_Q_SERIAL]));
-			if (!tx_skb) {
-				continue;
-			}
-			atomic_dec(&queue_items[PRIO_Q_SERIAL]);
-		}else if (atomic_read(&queue_items[PRIO_Q_BT]) > 0) {
-			tx_skb = skb_dequeue(&(context->tx_q[PRIO_Q_BT]));
-			if (!tx_skb) {
-				continue;
-			}
-			atomic_dec(&queue_items[PRIO_Q_BT]);
-		} else if (atomic_read(&queue_items[PRIO_Q_OTHERS]) > 0) {
-			tx_skb = skb_dequeue(&(context->tx_q[PRIO_Q_OTHERS]));
-			if (!tx_skb) {
-				continue;
-			}
-			atomic_dec(&queue_items[PRIO_Q_OTHERS]);
-		} else {
-			msleep(1);
-			continue;
-		}
-
-		if (atomic_read(&tx_pending))
-			atomic_dec(&tx_pending);
-
-		/* resume network tx queue if bearable load */
-		if (atomic_read(&tx_pending) < TX_RESUME_THRESHOLD) {
-			esp_tx_resume();
-			#if TEST_RAW_TP
-				esp_raw_tp_queue_resume();
-			#endif
-		}
-
-		buf_needed = (tx_skb->len + ESP_RX_BUFFER_SIZE - 1) / ESP_RX_BUFFER_SIZE;
-
-		/*If SDIO slave buffer is available to write then only write data
-		else wait till buffer is available*/
-		ret = is_sdio_write_buffer_available(buf_needed);
-		if(!ret) {
+		if (!retry) {
+			/* No buffer available at slave */
 			dev_kfree_skb(tx_skb);
+			tx_skb = NULL;
 			continue;
 		}
 
@@ -610,10 +587,11 @@ static int tx_process(void *data)
 			block_cnt = data_left / ESP_BLOCK_SIZE;
 			len_to_send = data_left;
 			ret = esp_write_block(context, ESP_SLAVE_CMD53_END_ADDR - len_to_send,
-					pos, (len_to_send + 3) & (~3), ACQUIRE_LOCK);
+					pos, (len_to_send + 3) & (~3), LOCK_ALREADY_ACQUIRED);
 
 			if (ret) {
 				printk (KERN_ERR "%s: Failed to send data: %d %d %d\n", __func__, ret, len_to_send, data_left);
+				sdio_release_host(context->func);
 				break;
 			}
 
@@ -624,13 +602,16 @@ static int tx_process(void *data)
 		if (ret) {
 			/* drop the packet */
 			dev_kfree_skb(tx_skb);
+			tx_skb = NULL;
 			continue;
 		}
 
 		context->tx_buffer_count += buf_needed;
 		context->tx_buffer_count = context->tx_buffer_count % ESP_TX_BUFFER_MAX;
 
+		sdio_release_host(context->func);
 		dev_kfree_skb(tx_skb);
+		tx_skb = NULL;
 	}
 
 	do_exit(0);
@@ -717,6 +698,7 @@ static int monitor_process(void *data)
 
 				/* drop the packet */
 				dev_kfree_skb(skb);
+				skb = NULL;
 			}
 		}
 
@@ -746,6 +728,7 @@ static int esp_probe(struct sdio_func *func,
 		return -ENOMEM;
 	}
 
+	context->state = ESP_CONTEXT_READY;
 	atomic_set(&tx_pending, 0);
 	ret = init_context(context);
 	if (ret) {
@@ -758,16 +741,9 @@ static int esp_probe(struct sdio_func *func,
 	if (!tx_thread)
 		printk (KERN_ERR "Failed to create esp32_sdio TX thread\n");
 
-	ret = esp_add_card(context->adapter);
-	if (ret) {
-		esp_remove(func);
-		printk (KERN_ERR "Failed to add card\n");
-		deinit_sdio_func(func);
-		return ret;
-	}
+	context->adapter->dev = &func->dev;
+	generate_slave_intr(context, BIT(ESP_OPEN_DATA_PATH));
 
-
-	context->state = ESP_CONTEXT_READY;
 
 #ifdef CONFIG_ENABLE_MONITOR_PROCESS
 	monitor_thread = kthread_run(monitor_process, context, "Monitor process");
@@ -776,7 +752,6 @@ static int esp_probe(struct sdio_func *func,
 		printk (KERN_ERR "Failed to create monitor thread\n");
 #endif
 
-	generate_slave_intr(context, BIT(ESP_OPEN_DATA_PATH));
 	return ret;
 }
 
@@ -800,31 +775,66 @@ int esp_init_interface_layer(struct esp_adapter *adapter)
 	return sdio_register_driver(&esp_sdio_driver);
 }
 
-int process_init_event(u8 *evt_buf, u8 len)
+void process_event_esp_bootup(struct esp_adapter *adapter, u8 *evt_buf, u8 len)
 {
 	u8 len_left = len, tag_len;
 	u8 *pos;
+	struct esp_sdio_context *context = &sdio_context;
+
+	if (!adapter)
+		return;
 
 	if (!evt_buf)
-		return -1;
+		return;
 
 	pos = evt_buf;
 
 	while (len_left) {
 		tag_len = *(pos + 1);
+
 		printk(KERN_INFO "EVENT: %d\n", *pos);
-		if (*pos == ESP_PRIV_CAPABILITY) {
-			process_capabilities(*(pos + 2));
+
+		if (*pos == ESP_BOOTUP_CAPABILITY) {
+
+			adapter->capabilities = *(pos + 2);
+			process_capabilities(adapter);
 			print_capabilities(*(pos + 2));
-		} else if (*pos == ESP_PRIV_TEST_RAW_TP) {
-			process_test_capabilities(*(pos + 2));
+
+		} else if (*pos == ESP_BOOTUP_FIRMWARE_CHIP_ID){
+
+			printk(KERN_INFO "ESP chipset detected [%s]\n", 
+				*(pos+2)==ESP_FIRMWARE_CHIP_ESP32 ? "esp32":
+				*(pos+2)==ESP_FIRMWARE_CHIP_ESP32S2 ? "esp32-s2" :
+				*(pos+2)==ESP_FIRMWARE_CHIP_ESP32C3 ? "esp32-c3" :
+				*(pos+2)==ESP_FIRMWARE_CHIP_ESP32S3 ? "esp32-s3" :
+				"unknown");
+
+			if (*(pos+2)!=ESP_FIRMWARE_CHIP_ESP32)
+				printk(KERN_ERR "SDIO is only supported with ESP32\n");
+
+		} else if (*pos == ESP_BOOTUP_FW_DATA) {
+
+			if (tag_len != sizeof(struct fw_data))
+				printk(KERN_INFO "Length not matching to firmware data size\n");
+			else
+				if (process_fw_data((struct fw_data*)(pos + 2)))
+					if (context->func) {
+						generate_slave_intr(context, BIT(ESP_CLOSE_DATA_PATH));
+						return;
+					}
+
 		} else {
 			printk (KERN_WARNING "Unsupported tag in event");
 		}
+
 		pos += (tag_len+2);
 		len_left -= (tag_len+2);
 	}
-	return 0;
+
+	if (esp_add_card(adapter)) {
+		printk(KERN_ERR "network iterface init failed\n");
+		generate_slave_intr(context, BIT(ESP_CLOSE_DATA_PATH));
+	}
 }
 
 void esp_deinit_interface_layer(void)

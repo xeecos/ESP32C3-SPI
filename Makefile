@@ -1,6 +1,5 @@
-CONFIG_SUPPORT_ESP_SERIAL = y
-CONFIG_TEST_RAW_TP := n
 CONFIG_ENABLE_MONITOR_PROCESS = n
+
 # Toolchain Path
 CROSS_COMPILE := /usr/bin/arm-linux-gnueabi-
 # Linux Kernel header
@@ -20,19 +19,11 @@ ifeq ($(target), spi)
 	MODULE_NAME=esp32_spi
 endif
 
-ifeq ($(CONFIG_SUPPORT_ESP_SERIAL), y)
-	EXTRA_CFLAGS += -DCONFIG_SUPPORT_ESP_SERIAL
-endif
-
-ifeq ($(CONFIG_TEST_RAW_TP), y)
-	EXTRA_CFLAGS += -DCONFIG_TEST_RAW_TP
-endif
-
 ifeq ($(CONFIG_ENABLE_MONITOR_PROCESS), y)
 	EXTRA_CFLAGS += -DCONFIG_ENABLE_MONITOR_PROCESS
 endif
 
-EXTRA_CFLAGS += -I$(PWD)/../../../../common/include -I$(PWD)
+EXTRA_CFLAGS += -I$(PWD)/include -I$(PWD)
 
 ifeq ($(MODULE_NAME), esp32_sdio)
 	EXTRA_CFLAGS += -I$(PWD)/sdio
@@ -47,11 +38,7 @@ endif
 PWD := $(shell pwd)
 
 obj-m := $(MODULE_NAME).o
-$(MODULE_NAME)-y := esp_bt.o main.o esp_stats.o $(module_objects)
-
-ifeq ($(CONFIG_SUPPORT_ESP_SERIAL), y)
-	$(MODULE_NAME)-y += esp_serial.o esp_rb.o
-endif
+$(MODULE_NAME)-y := main.o esp_cmd.o esp_wpa_utils.o esp_cfg80211.o $(module_objects)
 
 all: clean
 	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL) M=$(PWD) modules
