@@ -19,9 +19,9 @@
 
 #include "esp.h"
 
-#define HANDSHAKE_PIN           22
+#define HANDSHAKE_PIN           38
 #define SPI_IRQ                 gpio_to_irq(HANDSHAKE_PIN)
-#define SPI_DATA_READY_PIN      27
+#define SPI_DATA_READY_PIN      41
 #define SPI_DATA_READY_IRQ      gpio_to_irq(SPI_DATA_READY_PIN)
 #define SPI_BUF_SIZE            1600
 
