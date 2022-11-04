@@ -1,2 +1,0 @@
-/home/indream/esp-hosted/esp_hosted_ng/host/esp_bt.o /home/indream/esp-hosted/esp_hosted_ng/host/main.o /home/indream/esp-hosted/esp_hosted_ng/host/esp_cmd.o /home/indream/esp-hosted/esp_hosted_ng/host/esp_wpa_utils.o /home/indream/esp-hosted/esp_hosted_ng/host/esp_cfg80211.o /home/indream/esp-hosted/esp_hosted_ng/host/sdio/esp_sdio.o /home/indream/esp-hosted/esp_hosted_ng/host/sdio/esp_sdio_api.o
-
