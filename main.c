@@ -801,7 +801,7 @@ static int __init esp_init(void)
 	struct esp_adapter *adapter = NULL;
 
 	/* Reset ESP, Clean start ESP */
-	// esp_reset();
+	esp_reset();
 	msleep(200);
 
 	printk(KERN_INFO,"init esp32\n");
