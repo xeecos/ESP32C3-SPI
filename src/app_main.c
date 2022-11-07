@@ -103,34 +103,34 @@ uint8_t ap_mac[MAC_LEN] = {0};
 
 static void print_firmware_version()
 {
-	//ESP_LOGI(TAG, "*********************************************************************");
-	//ESP_LOGI(TAG, "                ESP-Hosted-FG Firmware version :: %d.%d.%d ",  PROJECT_VERSION_MAJOR_1, PROJECT_VERSION_MAJOR_2, PROJECT_VERSION_MINOR);
+	ESP_LOGI(TAG, "*********************************************************************");
+	ESP_LOGI(TAG, "                ESP-Hosted-FG Firmware version :: %d.%d.%d ",  PROJECT_VERSION_MAJOR_1, PROJECT_VERSION_MAJOR_2, PROJECT_VERSION_MINOR);
 #if CONFIG_ESP_SPI_HOST_INTERFACE
 #if BLUETOOTH_UART
-	//ESP_LOGI(TAG, "                Transport used :: SPI + UART                    ");
+	ESP_LOGI(TAG, "                Transport used :: SPI + UART                    ");
 #else
-	//ESP_LOGI(TAG, "                Transport used :: SPI only                      ");
+	ESP_LOGI(TAG, "                Transport used :: SPI only                      ");
 #endif
 #else
 #if BLUETOOTH_UART
-	//ESP_LOGI(TAG, "                Transport used :: SDIO + UART                   ");
+	ESP_LOGI(TAG, "                Transport used :: SDIO + UART                   ");
 #else
-	//ESP_LOGI(TAG, "                Transport used :: SDIO only                     ");
+	ESP_LOGI(TAG, "                Transport used :: SDIO only                     ");
 #endif
 #endif
-	//ESP_LOGI(TAG, "*********************************************************************");
+	ESP_LOGI(TAG, "*********************************************************************");
 }
 
 static uint8_t get_capabilities()
 {
 	uint8_t cap = 0;
 
-	//ESP_LOGI(TAG, "Supported features are:");
+	ESP_LOGI(TAG, "Supported features are:");
 #if CONFIG_ESP_SPI_HOST_INTERFACE
-	//ESP_LOGI(TAG, "- WLAN over SPI");
+	ESP_LOGI(TAG, "- WLAN over SPI");
 	cap |= ESP_WLAN_SPI_SUPPORT;
 #else
-	//ESP_LOGI(TAG, "- WLAN over SDIO");
+	ESP_LOGI(TAG, "- WLAN over SDIO");
 	cap |= ESP_WLAN_SDIO_SUPPORT;
 #endif
 
@@ -141,7 +141,7 @@ static uint8_t get_capabilities()
 #ifdef CONFIG_BT_ENABLED
 	cap |= get_bluetooth_capabilities();
 #endif
-	//ESP_LOGI(TAG, "capabilities: 0x%x", cap);
+	ESP_LOGI(TAG, "capabilities: 0x%x", cap);
 
 	return cap;
 }
@@ -198,15 +198,15 @@ void esp_update_ap_mac(void)
 	char mac_str[BSSID_LENGTH] = "";
 
 	ret = esp_wifi_get_mac(ESP_IF_WIFI_AP, ap_mac);
-	//ESP_LOGI(TAG, "Get softap mac address");
+	ESP_LOGI(TAG, "Get softap mac address");
 	if (ret)
 	{
-		//ESP_LOGE(TAG, "Error in getting MAC of ESP softap %d", ret);
+		ESP_LOGE(TAG, "Error in getting MAC of ESP softap %d", ret);
 	}
 	else
 	{
 		snprintf(mac_str, BSSID_LENGTH, MACSTR, MAC2STR(ap_mac));
-		//ESP_LOGI(TAG, "AP mac [%s] ", mac_str);
+		ESP_LOGI(TAG, "AP mac [%s] ", mac_str);
 	}
 }
 
@@ -285,7 +285,7 @@ void process_tx_pkt(interface_buffer_handle_t *buf_handle)
 	if (!datapath)
 	{
 #if CONFIG_ESP_WLAN_DEBUG
-		//ESP_LOGD(TAG_TX, "Data path stopped");
+		ESP_LOGD(TAG_TX, "Data path stopped");
 #endif
 		/* Post processing */
 		if (buf_handle->free_buf_handle && buf_handle->priv_buffer_handle)
@@ -358,12 +358,12 @@ void process_serial_rx_pkt(uint8_t *buf)
 	rem_buff_size = sizeof(r.data) - r.len;
 
 #if CONFIG_ESP_SERIAL_DEBUG
-	//ESP_LOG_BUFFER_HEXDUMP(TAG_RX_S, payload, payload_len, //ESP_LOG_INFO);
+	ESP_LOG_BUFFER_HEXDUMP(TAG_RX_S, payload, payload_len, ESP_LOG_INFO);
 #endif
 
 	while (r.valid)
 	{
-		//ESP_LOGI(TAG, "More segment: %u curr seq: %u header seq: %u\n", header->flags & MORE_FRAGMENT, r.cur_seq_no, header->seq_num);
+		ESP_LOGI(TAG, "More segment: %u curr seq: %u header seq: %u\n", header->flags & MORE_FRAGMENT, r.cur_seq_no, header->seq_num);
 		vTaskDelay(10);
 	}
 
@@ -403,14 +403,14 @@ void process_rx_pkt(interface_buffer_handle_t *buf_handle)
 	payload_len = le16toh(header->len);
 
 #if CONFIG_ESP_WLAN_DEBUG
-	//ESP_LOG_BUFFER_HEXDUMP(TAG_RX, payload, 8, //ESP_LOG_INFO);
+	ESP_LOG_BUFFER_HEXDUMP(TAG_RX, payload, 8, ESP_LOG_INFO);
 #endif
 
 	if ((buf_handle->if_type == ESP_STA_IF) && station_connected)
 	{
 		/* Forward data to wlan driver */
 		esp_wifi_internal_tx(ESP_IF_WIFI_STA, payload, payload_len);
-		/*//ESP_LOG_BUFFER_HEXDUMP("spi_sta_rx", payload, payload_len, //ESP_LOG_INFO);*/
+		/*ESP_LOG_BUFFER_HEXDUMP("spi_sta_rx", payload, payload_len, ESP_LOG_INFO);*/
 	}
 	else if (buf_handle->if_type == ESP_AP_IF && softap_started)
 	{
@@ -484,7 +484,7 @@ static ssize_t serial_read_data(uint8_t *data, ssize_t len)
 	}
 	else
 	{
-		//ESP_LOGI(TAG, "No data to be read, len %d", len);
+		ESP_LOGI(TAG, "No data to be read, len %d", len);
 	}
 	return len;
 }
@@ -494,7 +494,7 @@ int send_to_host_queue(interface_buffer_handle_t *buf_handle, uint8_t queue_type
 	int ret = xQueueSend(to_host_queue[queue_type], buf_handle, portMAX_DELAY);
 	if (ret != pdTRUE)
 	{
-		//ESP_LOGE(TAG, "Failed to send buffer into queue[%u]\n", queue_type);
+		ESP_LOGE(TAG, "Failed to send buffer into queue[%u]\n", queue_type);
 		return ESP_FAIL;
 	}
 	if (queue_type == PRIO_Q_SERIAL)
@@ -504,7 +504,7 @@ int send_to_host_queue(interface_buffer_handle_t *buf_handle, uint8_t queue_type
 
 	if (ret != pdTRUE)
 	{
-		//ESP_LOGE(TAG, "Failed to send buffer into meta queue[%u]\n", queue_type);
+		ESP_LOGE(TAG, "Failed to send buffer into meta queue[%u]\n", queue_type);
 		return ESP_FAIL;
 	}
 
@@ -555,7 +555,7 @@ static esp_err_t serial_write_data(uint8_t *data, ssize_t len)
 		}
 
 #if CONFIG_ESP_SERIAL_DEBUG
-		//ESP_LOG_BUFFER_HEXDUMP(TAG_TX_S, data, frag_len, //ESP_LOG_INFO);
+		ESP_LOG_BUFFER_HEXDUMP(TAG_TX_S, data, frag_len, ESP_LOG_INFO);
 #endif
 
 		left_len -= frag_len;
@@ -671,7 +671,7 @@ static esp_err_t print_real_time_stats(TickType_t xTicksToWait)
 		goto exit;
 	}
 
-	//ESP_LOGI(TAG, "| Task | Run Time | Percentage");
+	ESP_LOGI(TAG, "| Task | Run Time | Percentage");
 	/* Match each task in start_array to those in the end_array */
 	for (int i = 0; i < start_array_size; i++)
 	{
@@ -694,7 +694,7 @@ static esp_err_t print_real_time_stats(TickType_t xTicksToWait)
 										 start_array[i].ulRunTimeCounter;
 			uint32_t percentage_time = (task_elapsed_time * 100UL) /
 									   (total_elapsed_time * portNUM_PROCESSORS);
-			//ESP_LOGI(TAG, "| %s | %d | %d%%", start_array[i].pcTaskName,
+			ESP_LOGI(TAG, "| %s | %d | %d%%", start_array[i].pcTaskName,
 					 task_elapsed_time, percentage_time);
 		}
 	}
@@ -704,14 +704,14 @@ static esp_err_t print_real_time_stats(TickType_t xTicksToWait)
 	{
 		if (start_array[i].xHandle != NULL)
 		{
-			//ESP_LOGI(TAG, "| %s | Deleted", start_array[i].pcTaskName);
+			ESP_LOGI(TAG, "| %s | Deleted", start_array[i].pcTaskName);
 		}
 	}
 	for (int i = 0; i < end_array_size; i++)
 	{
 		if (end_array[i].xHandle != NULL)
 		{
-			//ESP_LOGI(TAG, "| %s | Created", end_array[i].pcTaskName);
+			ESP_LOGI(TAG, "| %s | Created", end_array[i].pcTaskName);
 		}
 	}
 	ret = ESP_OK;
@@ -728,14 +728,14 @@ void task_runtime_stats_task(void *pvParameters)
 {
 	while (1)
 	{
-		//ESP_LOGI(TAG, "\n\nGetting real time stats over %d ticks", STATS_TICKS);
+		ESP_LOGI(TAG, "\n\nGetting real time stats over %d ticks", STATS_TICKS);
 		if (print_real_time_stats(STATS_TICKS) == ESP_OK)
 		{
-			//ESP_LOGI(TAG, "Real time stats obtained");
+			ESP_LOGI(TAG, "Real time stats obtained");
 		}
 		else
 		{
-			//ESP_LOGI(TAG, "Error getting real time stats");
+			ESP_LOGI(TAG, "Error getting real time stats");
 		}
 		vTaskDelay(pdMS_TO_TICKS(1000 * 2));
 	}
@@ -777,7 +777,7 @@ static void uart_event_task(void *pvParameters)
         //Waiting for UART event.
         if(xQueueReceive(uart0_queue, (void * )&event, (portTickType)portMAX_DELAY)) {
             bzero(dtmp, RD_BUF_SIZE);
-            //ESP_LOGI(TAG, "uart[%d] event:", UART_NUM_1);
+            ESP_LOGI(TAG, "uart[%d] event:", UART_NUM_1);
             switch(event.type) {
                 //Event of UART receving data
                 /*We'd better handler data event fast, there would be much more data events than
@@ -790,7 +790,7 @@ static void uart_event_task(void *pvParameters)
                     break;
                 //Event of HW FIFO overflow detected
                 case UART_FIFO_OVF:
-                    //ESP_LOGI(TAG, "hw fifo overflow");
+                    ESP_LOGI(TAG, "hw fifo overflow");
                     // If fifo overflow happened, you should consider adding flow control for your application.
                     // The ISR has already reset the rx FIFO,
                     // As an example, we directly flush the rx buffer here in order to read more data.
@@ -799,7 +799,7 @@ static void uart_event_task(void *pvParameters)
                     break;
                 //Event of UART ring buffer full
                 case UART_BUFFER_FULL:
-                    //ESP_LOGI(TAG, "ring buffer full");
+                    ESP_LOGI(TAG, "ring buffer full");
                     // If buffer full happened, you should consider encreasing your buffer size
                     // As an example, we directly flush the rx buffer here in order to read more data.
                     uart_flush_input(UART_NUM_1);
@@ -807,21 +807,21 @@ static void uart_event_task(void *pvParameters)
                     break;
                 //Event of UART RX break detected
                 case UART_BREAK:
-                    //ESP_LOGI(TAG, "uart rx break");
+                    ESP_LOGI(TAG, "uart rx break");
                     break;
                 //Event of UART parity check error
                 case UART_PARITY_ERR:
-                    //ESP_LOGI(TAG, "uart parity error");
+                    ESP_LOGI(TAG, "uart parity error");
                     break;
                 //Event of UART frame error
                 case UART_FRAME_ERR:
-                    //ESP_LOGI(TAG, "uart frame error");
+                    ESP_LOGI(TAG, "uart frame error");
                     break;
                 //UART_PATTERN_DET
                 case UART_PATTERN_DET:
                     // uart_get_buffered_data_len(UART_NUM_1, &buffered_size);
                     // int pos = uart_pattern_pop_pos(UART_NUM_1);
-                    // //ESP_LOGI(TAG, "[UART PATTERN DETECTED] pos: %d, buffered size: %d", pos, buffered_size);
+                    // ESP_LOGI(TAG, "[UART PATTERN DETECTED] pos: %d, buffered size: %d", pos, buffered_size);
                     // if (pos == -1) {
                     //     // There used to be a UART_PATTERN_DET event, but the pattern position queue is full so that it can not
                     //     // record the position. We should set a larger queue size.
@@ -832,13 +832,13 @@ static void uart_event_task(void *pvParameters)
                     //     uint8_t pat[PATTERN_CHR_NUM + 1];
                     //     memset(pat, 0, sizeof(pat));
                     //     uart_read_bytes(UART_NUM_1, pat, PATTERN_CHR_NUM, 100 / portTICK_PERIOD_MS);
-                    //     //ESP_LOGI(TAG, "read data: %s", dtmp);
-                    //     //ESP_LOGI(TAG, "read pat : %s", pat);
+                    //     ESP_LOGI(TAG, "read data: %s", dtmp);
+                    //     ESP_LOGI(TAG, "read pat : %s", pat);
                     // }
                     break;
                 //Others
                 default:
-                    //ESP_LOGI(TAG, "uart event type: %d", event.type);
+                    ESP_LOGI(TAG, "uart event type: %d", event.type);
                     break;
             }
         }
@@ -876,18 +876,18 @@ void app_main()
 	ret = esp_read_mac(mac, ESP_MAC_BT);
 	if (ret)
 	{
-		//ESP_LOGE(TAG, "Failed to read BT Mac addr\n");
+		ESP_LOGE(TAG, "Failed to read BT Mac addr\n");
 	}
 	else
 	{
-		//ESP_LOGI(TAG, "ESP Bluetooth MAC addr: %2x:%2x:%2x:%2x:%2x:%2x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+		ESP_LOGI(TAG, "ESP Bluetooth MAC addr: %2x:%2x:%2x:%2x:%2x:%2x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 	}
 #endif
 
 	pc_pserial = protocomm_new();
 	if (pc_pserial == NULL)
 	{
-		//ESP_LOGE(TAG, "Failed to allocate memory for new instance of protocomm ");
+		ESP_LOGE(TAG, "Failed to allocate memory for new instance of protocomm ");
 		return;
 	}
 
@@ -895,7 +895,7 @@ void app_main()
 	if (protocomm_add_endpoint(pc_pserial, CTRL_EP_NAME_RESP,
 							   data_transfer_handler, NULL) != ESP_OK)
 	{
-		//ESP_LOGE(TAG, "Failed to add enpoint");
+		ESP_LOGE(TAG, "Failed to add enpoint");
 		return;
 	}
 
@@ -903,7 +903,7 @@ void app_main()
 	if (protocomm_add_endpoint(pc_pserial, CTRL_EP_NAME_EVENT,
 							   ctrl_notify_handler, NULL) != ESP_OK)
 	{
-		//ESP_LOGE(TAG, "Failed to add enpoint");
+		ESP_LOGE(TAG, "Failed to add enpoint");
 		return;
 	}
 
@@ -914,7 +914,7 @@ void app_main()
 
 	if (!if_context || !if_context->if_ops)
 	{
-		//ESP_LOGE(TAG, "Failed to insert driver\n");
+		ESP_LOGE(TAG, "Failed to insert driver\n");
 		return;
 	}
 
@@ -922,7 +922,7 @@ void app_main()
 
 	if (!if_handle)
 	{
-		//ESP_LOGE(TAG, "Failed to initialize driver\n");
+		ESP_LOGE(TAG, "Failed to initialize driver\n");
 		return;
 	}
 
