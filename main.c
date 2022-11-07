@@ -32,7 +32,7 @@
 #include "esp_cfg80211.h"
 
 #define HOST_GPIO_PIN_INVALID 40
-static int resetpin = HOST_GPIO_PIN_INVALID;
+static int resetpin = -1;
 extern u8 ap_bssid[MAC_ADDR_LEN];
 
 module_param(resetpin, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
@@ -801,7 +801,7 @@ static int __init esp_init(void)
 	struct esp_adapter *adapter = NULL;
 
 	/* Reset ESP, Clean start ESP */
-	esp_reset();
+	// esp_reset();
 	msleep(200);
 
 	adapter = init_adapter();
@@ -836,9 +836,6 @@ static void __exit esp_exit(void)
 	}
 }
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Amey Inamdar <amey.inamdar@espressif.com>");
-MODULE_AUTHOR("Mangesh Malusare <mangesh.malusare@espressif.com>");
-MODULE_AUTHOR("Yogesh Mantri <yogesh.mantri@espressif.com>");
 MODULE_DESCRIPTION("Wifi driver for ESP-Hosted solution");
 MODULE_VERSION("0.1");
 module_init(esp_init);
