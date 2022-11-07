@@ -19,7 +19,7 @@
 
 #include "esp.h"
 
-#define HANDSHAKE_PIN           47
+#define HANDSHAKE_PIN           PE2
 #define SPI_IRQ                 gpio_to_irq(HANDSHAKE_PIN)
 #define SPI_DATA_READY_PIN      44
 #define SPI_DATA_READY_IRQ      gpio_to_irq(SPI_DATA_READY_PIN)
