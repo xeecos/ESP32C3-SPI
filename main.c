@@ -804,7 +804,7 @@ static int __init esp_init(void)
 	// esp_reset();
 	msleep(200);
 
-	printk(KERN_ALERT,"init esp32\n");
+	printk(KERN_INFO,"init esp32\n");
 	adapter = init_adapter();
 
 	if (!adapter)
