@@ -7,7 +7,7 @@ KERNEL := /lib/modules/$(shell uname -r)/build
 # Architecture
 ARCH := arm
 
-MODULE_NAME=esp32c3_spi
+MODULE_NAME=esp32c3-spi
 
 ifeq ($(CONFIG_ENABLE_MONITOR_PROCESS), y)
 	EXTRA_CFLAGS += -DCONFIG_ENABLE_MONITOR_PROCESS
