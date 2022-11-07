@@ -771,12 +771,15 @@ static void deinit_adapter(void)
 
 static void esp_reset(void)
 {
-	if (resetpin != HOST_GPIO_PIN_INVALID) {
+	// if (resetpin != HOST_GPIO_PIN_INVALID) 
+	{
 		/* Check valid GPIO or not */
-		if (!gpio_is_valid(resetpin)) {
-			printk(KERN_WARNING "%s, ESP32: host resetpin (%d) configured is invalid GPIO\n", __func__, resetpin);
+		// if (!gpio_is_valid(resetpin)) {
+		// 	printk(KERN_WARNING "%s, ESP32: host resetpin (%d) configured is invalid GPIO\n", __func__, resetpin);
+		// 	resetpin = HOST_GPIO_PIN_INVALID;
+		// } else 
+		{
 			resetpin = HOST_GPIO_PIN_INVALID;
-		} else {
 			gpio_request(resetpin, "sysfs");
 
 			/* HOST's resetpin set to OUTPUT, HIGH */
