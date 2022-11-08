@@ -31,7 +31,7 @@
 
 #include "esp_cfg80211.h"
 
-#define HOST_GPIO_PIN_INVALID 45
+#define HOST_GPIO_PIN_INVALID 132
 static int resetpin = -1;
 extern u8 ap_bssid[MAC_ADDR_LEN];
 
