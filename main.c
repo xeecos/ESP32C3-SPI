@@ -833,9 +833,9 @@ static void __exit esp_exit(void)
 	esp_deinit_interface_layer();
 	deinit_adapter();
 
-	if (resetpin != HOST_GPIO_PIN_INVALID) {
+	// if (resetpin != HOST_GPIO_PIN_INVALID) {
 		gpio_free(resetpin);
-	}
+	// }
 }
 
 module_init(esp_init);
