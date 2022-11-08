@@ -23,7 +23,6 @@
 #include "esp_spi.h"
 #include "esp_if.h"
 #include "esp_api.h"
-#include "esp_bt_api.h"
 #ifdef CONFIG_SUPPORT_ESP_SERIAL
 #include "esp_serial.h"
 #endif

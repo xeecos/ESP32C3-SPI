@@ -31,7 +31,6 @@
 #ifdef CONFIG_SUPPORT_ESP_SERIAL
 #include "esp_serial.h"
 #endif
-// #include "esp_bt_api.h"
 #include "esp_api.h"
 #include "esp_kernel_port.h"
 #include "esp_stats.h"
