@@ -491,11 +491,16 @@ static int spi_dev_init(int spi_clk_mhz)
 	}
 	msleep(200);
 	status = gpio_direction_input(HANDSHAKE_PIN);
-
-	if (status) {
-		gpio_free(HANDSHAKE_PIN);
-		printk (KERN_ERR "Failed to set GPIO direction of Handshake pin, err: %d\n",status);
-		return status;
+	int retry = 0;
+	while (status) {
+		msleep(200);
+		status = gpio_direction_input(HANDSHAKE_PIN);
+		if(retry++>10)
+		{
+			gpio_free(HANDSHAKE_PIN);
+			printk (KERN_ERR "Failed to set GPIO direction of Handshake pin, err: %d\n",status);
+			return status;
+		}
 	}
 
 	msleep(200);
