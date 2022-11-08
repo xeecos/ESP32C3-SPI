@@ -317,11 +317,11 @@ void process_capabilities(u8 cap)
 	adapter->capabilities = cap;
 
 	/* Reset BT */
-	esp_deinit_bt(esp_get_adapter());
+	// esp_deinit_bt(esp_get_adapter());
 
 	if ((cap & ESP_BT_SPI_SUPPORT) || (cap & ESP_BT_SDIO_SUPPORT)) {
 		msleep(200);
-		esp_init_bt(esp_get_adapter());
+		// esp_init_bt(esp_get_adapter());
 	}
 }
 
