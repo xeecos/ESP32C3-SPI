@@ -482,15 +482,6 @@ static int spi_init(void)
 		return status;
 	}
 
-#ifdef CONFIG_SUPPORT_ESP_SERIAL
-	status = esp_serial_init((void *) spi_context.adapter);
-	if (status != 0) {
-		spi_exit();
-		printk(KERN_ERR "Error initialising serial interface\n");
-		return status;
-	}
-#endif
-
 	status = esp_add_card(spi_context.adapter);
 	if (status) {
 		spi_exit();
@@ -523,7 +514,6 @@ static void spi_exit(void)
 		spi_context.spi_workqueue = NULL;
 	}
 
-	esp_serial_cleanup();
 	esp_remove_card(spi_context.adapter);
 
 	// if (spi_context.adapter->hcidev)
