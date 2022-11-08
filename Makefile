@@ -1,4 +1,4 @@
-CONFIG_SUPPORT_ESP_SERIAL = y
+CONFIG_SUPPORT_ESP_SERIAL = n
 CONFIG_TEST_RAW_TP := n
 CONFIG_ENABLE_MONITOR_PROCESS = n
 
@@ -13,18 +13,6 @@ ARCH := arm
 MODULE_NAME=esp32c3-spi
 
 
-ifeq ($(CONFIG_SUPPORT_ESP_SERIAL), y)
-	EXTRA_CFLAGS += -DCONFIG_SUPPORT_ESP_SERIAL
-endif
-
-ifeq ($(CONFIG_TEST_RAW_TP), y)
-	EXTRA_CFLAGS += -DCONFIG_TEST_RAW_TP
-endif
-
-ifeq ($(CONFIG_ENABLE_MONITOR_PROCESS), y)
-	EXTRA_CFLAGS += -DCONFIG_ENABLE_MONITOR_PROCESS
-endif
-
 EXTRA_CFLAGS += -I$(PWD)/include -I$(PWD)
 
 EXTRA_CFLAGS += -I$(PWD)/spi
@@ -35,9 +23,6 @@ PWD := $(shell pwd)
 obj-m := $(MODULE_NAME).o
 $(MODULE_NAME)-y := main.o esp_stats.o $(module_objects)
 
-ifeq ($(CONFIG_SUPPORT_ESP_SERIAL), y)
-	$(MODULE_NAME)-y += esp_serial.o esp_rb.o
-endif
 
 all: clean
 	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL) M=$(PWD) modules
