@@ -109,7 +109,7 @@ static const char TAG[] = "SPI_DRIVER";
      * Below value could be fine tuned to achieve highest
      * data rate in accordance with SPI Master
      * */
-    #define SPI_CLK_MHZ            10
+    #define SPI_CLK_MHZ            30
 
 #elif defined CONFIG_IDF_TARGET_ESP32S3
 
