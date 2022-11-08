@@ -446,26 +446,26 @@ static void process_rx_packet(struct sk_buff *skb)
 		priv->stats.rx_bytes += skb->len;
 		priv->stats.rx_packets++;
 	} else if (payload_header->if_type == ESP_HCI_IF) {
-		if (hdev) {
-			/* chop off the header from skb */
-			skb_pull(skb, offset);
+		// if (hdev) {
+		// 	/* chop off the header from skb */
+		// 	skb_pull(skb, offset);
 
-			type = skb->data;
-			/* print_hex_dump(KERN_INFO, "bt_rx: ",
-			 * DUMP_PREFIX_ADDRESS, 16, 1, skb->data, len, 1);*/
-			hci_skb_pkt_type(skb) = *type;
-			skb_pull(skb, 1);
+		// 	type = skb->data;
+		// 	/* print_hex_dump(KERN_INFO, "bt_rx: ",
+		// 	 * DUMP_PREFIX_ADDRESS, 16, 1, skb->data, len, 1);*/
+		// 	hci_skb_pkt_type(skb) = *type;
+		// 	skb_pull(skb, 1);
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 13, 0))
-			if (hci_recv_frame(hdev, skb)) {
-#else
-			if (hci_recv_frame(skb)) {
-#endif
-				hdev->stat.err_rx++;
-			} else {
-				esp_hci_update_rx_counter(hdev, *type, skb->len);
-			}
-		}
+// #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 13, 0))
+// 			if (hci_recv_frame(hdev, skb)) {
+// #else
+// 			if (hci_recv_frame(skb)) {
+// #endif
+// 				hdev->stat.err_rx++;
+// 			} else {
+// 				esp_hci_update_rx_counter(hdev, *type, skb->len);
+// 			}
+		// }
 	} else if (payload_header->if_type == ESP_PRIV_IF) {
 		process_priv_communication(skb);
 	} else if (payload_header->if_type == ESP_TEST_IF) {
