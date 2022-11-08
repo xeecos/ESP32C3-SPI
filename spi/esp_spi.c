@@ -489,7 +489,6 @@ static int spi_dev_init(int spi_clk_mhz)
 		printk (KERN_ERR "Failed to obtain GPIO for Handshake pin, err:%d\n",status);
 		return status;
 	}
-	msleep(200);
 	status = gpio_direction_input(HANDSHAKE_PIN);
 	if (status) {
 		gpio_free(HANDSHAKE_PIN);
@@ -497,7 +496,6 @@ static int spi_dev_init(int spi_clk_mhz)
 		return status;
 	}
 
-	msleep(200);
 	status = request_irq(SPI_IRQ, spi_interrupt_handler,
 			IRQF_SHARED | IRQF_TRIGGER_RISING,
 			"ESP_SPI", spi_context.esp_spi_dev);
@@ -507,7 +505,6 @@ static int spi_dev_init(int spi_clk_mhz)
 		return status;
 	}
 
-	msleep(200);
 	status = gpio_request(SPI_DATA_READY_PIN, "SPI_DATA_READY_PIN");
 	if (status) {
 		gpio_free(HANDSHAKE_PIN);
@@ -515,7 +512,6 @@ static int spi_dev_init(int spi_clk_mhz)
 		printk (KERN_ERR "Failed to obtain GPIO for Data ready pin, err:%d\n",status);
 		return status;
 	}
-	msleep(200);
 	status = gpio_direction_input(SPI_DATA_READY_PIN);
 	if (status) {
 		gpio_free(HANDSHAKE_PIN);
@@ -525,7 +521,6 @@ static int spi_dev_init(int spi_clk_mhz)
 		return status;
 	}
 
-	msleep(200);
 	status = request_irq(SPI_DATA_READY_IRQ, spi_data_ready_interrupt_handler,
 			IRQF_SHARED | IRQF_TRIGGER_RISING,
 			"ESP_SPI_DATA_READY", spi_context.esp_spi_dev);
