@@ -1,4 +1,6 @@
 /*
+ * Espressif Systems Wireless LAN device driver
+ *
  * Copyright (C) 2015-2021 Espressif Systems (Shanghai) PTE LTD
  *
  * This software file (the "File") is distributed by Espressif Systems (Shanghai)
@@ -14,30 +16,29 @@
  * ARE EXPRESSLY DISCLAIMED.  The License provides additional details about
  * this warranty disclaimer.
  */
-#ifndef _ESP_SPI_H_
-#define _ESP_SPI_H_
+
+#ifndef __ESP_STAT__H__
+#define __ESP_STAT__H__
 
 #include "esp.h"
 
-#define HANDSHAKE_PIN           130
-#define SPI_IRQ                 gpio_to_irq(HANDSHAKE_PIN)
-#define SPI_DATA_READY_PIN      133
-#define SPI_DATA_READY_IRQ      gpio_to_irq(SPI_DATA_READY_PIN)
-#define SPI_BUF_SIZE            1600
+#ifdef CONFIG_TEST_RAW_TP
+#define TEST_RAW_TP 1
+#else
+#define TEST_RAW_TP 0
+#endif
 
-struct esp_spi_context {
-	struct esp_adapter          *adapter;
-	struct spi_device           *esp_spi_dev;
-	struct sk_buff_head         tx_q[MAX_PRIORITY_QUEUES];
-	struct sk_buff_head         rx_q[MAX_PRIORITY_QUEUES];
-	struct workqueue_struct     *spi_workqueue;
-	struct work_struct          spi_work;
-};
+#if TEST_RAW_TP
 
-enum {
-	CLOSE_DATAPATH,
-	OPEN_DATAPATH,
-};
+#define TEST_RAW_TP__BUF_SIZE    1460
 
+#define ESP_TEST_RAW_TP__RX      0
+#define ESP_TEST_RAW_TP__TX      1
+
+void esp_raw_tp_queue_resume(void);
+#endif
+
+void test_raw_tp_cleanup(void);
+void update_test_raw_tp_rx_stats(u16 len);
 
 #endif

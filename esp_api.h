@@ -1,4 +1,6 @@
 /*
+ * Espressif Systems Wireless LAN device driver
+ *
  * Copyright (C) 2015-2021 Espressif Systems (Shanghai) PTE LTD
  *
  * This software file (the "File") is distributed by Espressif Systems (Shanghai)
@@ -14,30 +16,24 @@
  * ARE EXPRESSLY DISCLAIMED.  The License provides additional details about
  * this warranty disclaimer.
  */
-#ifndef _ESP_SPI_H_
-#define _ESP_SPI_H_
+
+#ifndef _esp_api__h_
+#define _esp_api__h_
 
 #include "esp.h"
 
-#define HANDSHAKE_PIN           130
-#define SPI_IRQ                 gpio_to_irq(HANDSHAKE_PIN)
-#define SPI_DATA_READY_PIN      133
-#define SPI_DATA_READY_IRQ      gpio_to_irq(SPI_DATA_READY_PIN)
-#define SPI_BUF_SIZE            1600
-
-struct esp_spi_context {
-	struct esp_adapter          *adapter;
-	struct spi_device           *esp_spi_dev;
-	struct sk_buff_head         tx_q[MAX_PRIORITY_QUEUES];
-	struct sk_buff_head         rx_q[MAX_PRIORITY_QUEUES];
-	struct workqueue_struct     *spi_workqueue;
-	struct work_struct          spi_work;
-};
-
-enum {
-	CLOSE_DATAPATH,
-	OPEN_DATAPATH,
-};
-
+int esp_add_card(struct esp_adapter *adapter);
+int esp_remove_card(struct esp_adapter *adapter);
+void esp_process_new_packet_intr(struct esp_adapter *adapter);
+struct esp_adapter * esp_get_adapter(void);
+struct sk_buff * esp_alloc_skb(u32 len);
+int esp_send_packet(struct esp_adapter *adapter, struct sk_buff *skb);
+u8 esp_is_bt_supported_over_sdio(u32 cap);
+int esp_is_tx_queue_paused(void);
+void esp_tx_pause(void);
+void esp_tx_resume(void);
+int process_init_event(u8 *evt_buf, u8 len);
+void process_capabilities(u8 cap);
+void process_test_capabilities(u8 cap);
 
 #endif
