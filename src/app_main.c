@@ -971,6 +971,6 @@ void app_main()
     uart_driver_install(UART_NUM_1, 2048, 2048, 20, &uart0_queue, 0);
     uart_param_config(UART_NUM_1, &uart_config);
     uart_set_pin(UART_NUM_1, 1, 5, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-    xTaskCreate(uart_event_task, "uart_event_task", 2048, NULL, CONFIG_ESP_DEFAULT_TASK_PRIO, NULL);
+    xTaskCreate(uart_event_task, "uart_event_task", 2048, NULL, 10, NULL);
 	
 }

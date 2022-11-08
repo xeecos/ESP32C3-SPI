@@ -55,7 +55,7 @@ struct mempool * mempool_create(uint32_t block_size)
 	SLIST_INIT(&(new->head));
 
 #if MEMPOOL_DEBUG
-	//ESP_LOGI(MEM_TAG, "Create mempool %p with block_size:%lu", new, block_size);
+	ESP_LOGI(MEM_TAG, "Create mempool %p with block_size:%lu", new, block_size);
 #endif
 	return new;
 #else
@@ -72,7 +72,7 @@ void mempool_destroy(struct mempool* mp)
 		return;
 
 #if MEMPOOL_DEBUG
-	//ESP_LOGI(MEM_TAG, "Destroy mempool %p", mp);
+	ESP_LOGI(MEM_TAG, "Destroy mempool %p", mp);
 #endif
 	while ((node1 = SLIST_FIRST(&(mp->head))) != NULL) {
 		SLIST_REMOVE_HEAD(&(mp->head), entries);
@@ -98,13 +98,13 @@ void * mempool_alloc(struct mempool* mp, int nbytes, int need_memset)
 		SLIST_REMOVE_HEAD(&(mp->head), entries);
 		portEXIT_CRITICAL(&(mp->mutex));
 #if MEMPOOL_DEBUG
-		//ESP_LOGI(MEM_TAG, "%p: num_reuse: %lu", mp, ++m_stats.num_reuse);
+		ESP_LOGI(MEM_TAG, "%p: num_reuse: %lu", mp, ++m_stats.num_reuse);
 #endif
 	} else {
 		portEXIT_CRITICAL(&(mp->mutex));
 		buf = MEM_ALLOC(mp->block_size);
 #if MEMPOOL_DEBUG
-		//ESP_LOGI(MEM_TAG, "%p: num_alloc: %lu", mp, ++m_stats.num_fresh_alloc);
+		ESP_LOGI(MEM_TAG, "%p: num_alloc: %lu", mp, ++m_stats.num_fresh_alloc);
 #endif
 	}
 #else
@@ -130,7 +130,7 @@ void mempool_free(struct mempool* mp, void *mem)
 	SLIST_INSERT_HEAD(&(mp->head), (struct mempool_entry *)mem, entries);
 	portEXIT_CRITICAL(&(mp->mutex));
 #if MEMPOOL_DEBUG
-	//ESP_LOGI(MEM_TAG, "%p: num_ret: %lu", mp, ++m_stats.num_free);
+	ESP_LOGI(MEM_TAG, "%p: num_ret: %lu", mp, ++m_stats.num_free);
 #endif	
 
 #else
