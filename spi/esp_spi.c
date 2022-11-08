@@ -30,7 +30,7 @@
 #include "esp_kernel_port.h"
 #include "esp_stats.h"
 
-#define SPI_INITIAL_CLK_MHZ     10
+#define SPI_INITIAL_CLK_MHZ     30
 #define NUMBER_1M               1000000
 #define TX_MAX_PENDING_COUNT    100
 #define TX_RESUME_THRESHOLD     (TX_MAX_PENDING_COUNT/5)
@@ -366,7 +366,7 @@ static int spi_dev_init(int spi_clk_mhz)
 	esp_board.mode = SPI_MODE_2;
 	esp_board.max_speed_hz = spi_clk_mhz * NUMBER_1M;
 	esp_board.bus_num = 0;
-	esp_board.chip_select = 0;
+	esp_board.chip_select = 1;
 
 	master = spi_busnum_to_master(esp_board.bus_num);
 	if (!master) {
