@@ -23,7 +23,6 @@
 #include "esp_spi.h"
 #include "esp_if.h"
 #include "esp_api.h"
-#include "esp_bt_api.h"
 #ifdef CONFIG_SUPPORT_ESP_SERIAL
 #include "esp_serial.h"
 #endif
@@ -363,10 +362,10 @@ static int spi_dev_init(int spi_clk_mhz)
 	struct spi_master *master = NULL;
 
 	strlcpy(esp_board.modalias, "esp_spi", sizeof(esp_board.modalias));
-	esp_board.mode = SPI_MODE_2;
+	esp_board.mode = SPI_MODE_3;
 	esp_board.max_speed_hz = spi_clk_mhz * NUMBER_1M;
 	esp_board.bus_num = 0;
-	esp_board.chip_select = 1;
+	esp_board.chip_select = 65;
 
 	master = spi_busnum_to_master(esp_board.bus_num);
 	if (!master) {
@@ -483,15 +482,6 @@ static int spi_init(void)
 		return status;
 	}
 
-#ifdef CONFIG_SUPPORT_ESP_SERIAL
-	status = esp_serial_init((void *) spi_context.adapter);
-	if (status != 0) {
-		spi_exit();
-		printk(KERN_ERR "Error initialising serial interface\n");
-		return status;
-	}
-#endif
-
 	status = esp_add_card(spi_context.adapter);
 	if (status) {
 		spi_exit();
@@ -524,7 +514,6 @@ static void spi_exit(void)
 		spi_context.spi_workqueue = NULL;
 	}
 
-	esp_serial_cleanup();
 	esp_remove_card(spi_context.adapter);
 
 	// if (spi_context.adapter->hcidev)

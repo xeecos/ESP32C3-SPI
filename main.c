@@ -31,7 +31,6 @@
 #ifdef CONFIG_SUPPORT_ESP_SERIAL
 #include "esp_serial.h"
 #endif
-// #include "esp_bt_api.h"
 #include "esp_api.h"
 #include "esp_kernel_port.h"
 #include "esp_stats.h"
@@ -341,11 +340,6 @@ static void process_event(u8 *evt_buf, u16 len)
 
 		ret = process_init_event(event->event_data, event->event_len);
 
-#ifdef CONFIG_SUPPORT_ESP_SERIAL
-		if (!ret)
-			esp_serial_reinit(esp_get_adapter());
-#endif
-
 	} else {
 		printk (KERN_WARNING "Drop unknown event\n");
 	}
@@ -405,22 +399,6 @@ static void process_rx_packet(struct sk_buff *skb)
 	}
 
 	if (payload_header->if_type == ESP_SERIAL_IF) {
-#ifdef CONFIG_SUPPORT_ESP_SERIAL
-		/* print_hex_dump(KERN_INFO, "esp_serial_rx: ",
-		 * DUMP_PREFIX_ADDRESS, 16, 1, skb->data + offset, len, 1  ); */
-		do {
-			ret = esp_serial_data_received(payload_header->if_num,
-					(skb->data + offset + ret_len), (len - ret_len));
-			if (ret < 0) {
-				printk(KERN_ERR "%s, Failed to process data for iface type %d\n",
-						__func__, payload_header->if_num);
-				break;
-			}
-			ret_len += ret;
-		} while (ret_len < len);
-#else
-		printk(KERN_ERR "%s, Dropping unsupported serial frame\n", __func__);
-#endif
 		dev_kfree_skb_any(skb);
 	} else if (payload_header->if_type == ESP_STA_IF ||
 	           payload_header->if_type == ESP_AP_IF) {
