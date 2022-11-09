@@ -32,6 +32,11 @@ struct esp_spi_context {
 	struct sk_buff_head         rx_q[MAX_PRIORITY_QUEUES];
 	struct workqueue_struct     *spi_workqueue;
 	struct work_struct          spi_work;
+	struct workqueue_struct     *nw_cmd_reinit_workqueue;
+	struct work_struct          nw_cmd_reinit_work;
+	uint8_t                     spi_clk_mhz;
+	uint8_t                     spi_gpio_enabled;
+	uint8_t                     reserved[2];
 };
 
 enum {
