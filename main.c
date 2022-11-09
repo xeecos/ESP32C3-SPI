@@ -31,6 +31,7 @@
 #ifdef CONFIG_SUPPORT_ESP_SERIAL
 #include "esp_serial.h"
 #endif
+// #include "esp_bt_api.h"
 #include "esp_api.h"
 #include "esp_kernel_port.h"
 #include "esp_stats.h"
@@ -340,6 +341,11 @@ static void process_event(u8 *evt_buf, u16 len)
 
 		ret = process_init_event(event->event_data, event->event_len);
 
+#ifdef CONFIG_SUPPORT_ESP_SERIAL
+		if (!ret)
+			esp_serial_reinit(esp_get_adapter());
+#endif
+
 	} else {
 		printk (KERN_WARNING "Drop unknown event\n");
 	}
@@ -399,6 +405,22 @@ static void process_rx_packet(struct sk_buff *skb)
 	}
 
 	if (payload_header->if_type == ESP_SERIAL_IF) {
+#ifdef CONFIG_SUPPORT_ESP_SERIAL
+		/* print_hex_dump(KERN_INFO, "esp_serial_rx: ",
+		 * DUMP_PREFIX_ADDRESS, 16, 1, skb->data + offset, len, 1  ); */
+		do {
+			ret = esp_serial_data_received(payload_header->if_num,
+					(skb->data + offset + ret_len), (len - ret_len));
+			if (ret < 0) {
+				printk(KERN_ERR "%s, Failed to process data for iface type %d\n",
+						__func__, payload_header->if_num);
+				break;
+			}
+			ret_len += ret;
+		} while (ret_len < len);
+#else
+		printk(KERN_ERR "%s, Dropping unsupported serial frame\n", __func__);
+#endif
 		dev_kfree_skb_any(skb);
 	} else if (payload_header->if_type == ESP_STA_IF ||
 	           payload_header->if_type == ESP_AP_IF) {
@@ -424,26 +446,26 @@ static void process_rx_packet(struct sk_buff *skb)
 		priv->stats.rx_bytes += skb->len;
 		priv->stats.rx_packets++;
 	} else if (payload_header->if_type == ESP_HCI_IF) {
-		if (hdev) {
-			/* chop off the header from skb */
-			skb_pull(skb, offset);
+		// if (hdev) {
+		// 	/* chop off the header from skb */
+		// 	skb_pull(skb, offset);
 
-			type = skb->data;
-			/* print_hex_dump(KERN_INFO, "bt_rx: ",
-			 * DUMP_PREFIX_ADDRESS, 16, 1, skb->data, len, 1);*/
-			hci_skb_pkt_type(skb) = *type;
-			skb_pull(skb, 1);
+		// 	type = skb->data;
+		// 	/* print_hex_dump(KERN_INFO, "bt_rx: ",
+		// 	 * DUMP_PREFIX_ADDRESS, 16, 1, skb->data, len, 1);*/
+		// 	hci_skb_pkt_type(skb) = *type;
+		// 	skb_pull(skb, 1);
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 13, 0))
-			if (hci_recv_frame(hdev, skb)) {
-#else
-			if (hci_recv_frame(skb)) {
-#endif
-				hdev->stat.err_rx++;
-			} else {
-				esp_hci_update_rx_counter(hdev, *type, skb->len);
-			}
-		}
+// #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 13, 0))
+// 			if (hci_recv_frame(hdev, skb)) {
+// #else
+// 			if (hci_recv_frame(skb)) {
+// #endif
+// 				hdev->stat.err_rx++;
+// 			} else {
+// 				esp_hci_update_rx_counter(hdev, *type, skb->len);
+// 			}
+		// }
 	} else if (payload_header->if_type == ESP_PRIV_IF) {
 		process_priv_communication(skb);
 	} else if (payload_header->if_type == ESP_TEST_IF) {
