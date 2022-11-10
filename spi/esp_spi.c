@@ -23,7 +23,7 @@
 #include "esp_spi.h"
 #include "esp_if.h"
 #include "esp_api.h"
-#include "esp_bt_api.h"
+// #include "esp_bt_api.h"
 #ifdef CONFIG_SUPPORT_ESP_SERIAL
 #include "esp_serial.h"
 #endif
@@ -529,8 +529,8 @@ static void spi_exit(void)
 #endif
 	esp_remove_card(spi_context.adapter);
 
-	if (spi_context.adapter->hcidev)
-		esp_deinit_bt(spi_context.adapter);
+	// if (spi_context.adapter->hcidev)
+	// 	esp_deinit_bt(spi_context.adapter);
 
 	free_irq(SPI_IRQ, spi_context.esp_spi_dev);
 	free_irq(SPI_DATA_READY_IRQ, spi_context.esp_spi_dev);
