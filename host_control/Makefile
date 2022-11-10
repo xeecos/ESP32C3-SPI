@@ -1,6 +1,6 @@
 CC = gcc
 
-CROSS_COMPILE :=
+CROSS_COMPILE := arm-linux-gnueabi-
 
 CFLAGS = -C -Wall --sysroot=$(SDKTARGETSYSROOT)
 
@@ -8,11 +8,11 @@ CFLAGS_SANITIZE = -fsanitize=undefined  -fsanitize-address-use-after-scope -fsan
 
 LINKER = -lpthread -lrt
 
-DIR_COMMON = $(PWD)/../../../../common
-DIR_CTRL_LIB = $(PWD)/../../../control_lib
-DIR_SERIAL = $(PWD)/../../../virtual_serial_if
-DIR_COMPONENTS = $(PWD)/../../../components
-DIR_LINUX_PORT = $(PWD)/../../port
+DIR_COMMON = $(PWD)/../common
+DIR_CTRL_LIB = $(PWD)/../control_lib
+DIR_SERIAL = $(PWD)/../virtual_serial_if
+DIR_COMPONENTS = $(PWD)/../components
+DIR_LINUX_PORT = $(PWD)/../port
 
 INCLUDE += -I$(DIR_COMMON)/protobuf-c
 INCLUDE += -I$(DIR_COMMON)/include
