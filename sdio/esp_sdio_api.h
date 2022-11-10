@@ -1,4 +1,6 @@
 /*
+ * Espressif Systems Wireless LAN device driver
+ *
  * Copyright (C) 2015-2021 Espressif Systems (Shanghai) PTE LTD
  *
  * This software file (the "File") is distributed by Espressif Systems (Shanghai)
@@ -14,30 +16,14 @@
  * ARE EXPRESSLY DISCLAIMED.  The License provides additional details about
  * this warranty disclaimer.
  */
-#ifndef _ESP_SPI_H_
-#define _ESP_SPI_H_
 
-#include "esp.h"
+#ifndef _ESP_SDIO_API_H_
+#define _ESP_SDIO_API_H_
+#include "esp_sdio_decl.h"
 
-#define HANDSHAKE_PIN           130
-#define SPI_IRQ                 gpio_to_irq(HANDSHAKE_PIN)
-#define SPI_DATA_READY_PIN      133
-#define SPI_DATA_READY_IRQ      gpio_to_irq(SPI_DATA_READY_PIN)
-#define SPI_BUF_SIZE            1600
-
-struct esp_spi_context {
-	struct esp_adapter          *adapter;
-	struct spi_device           *esp_spi_dev;
-	struct sk_buff_head         tx_q[MAX_PRIORITY_QUEUES];
-	struct sk_buff_head         rx_q[MAX_PRIORITY_QUEUES];
-	struct workqueue_struct     *spi_workqueue;
-	struct work_struct          spi_work;
-};
-
-enum {
-	CLOSE_DATAPATH,
-	OPEN_DATAPATH,
-};
-
+int esp_read_reg(struct esp_sdio_context *context, u32 reg, u8 *data, u16 size, u8 is_lock_needed);
+int esp_read_block(struct esp_sdio_context *context, u32 reg, u8 *data, u16 size, u8 is_lock_needed);
+int esp_write_reg(struct esp_sdio_context *context, u32 reg, u8 *data, u16 size, u8 is_lock_needed);
+int esp_write_block(struct esp_sdio_context *context, u32 reg, u8 *data, u16 size, u8 is_lock_needed);
 
 #endif
