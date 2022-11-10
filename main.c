@@ -886,6 +886,7 @@ static int __init esp_init(void)
 		deinit_adapter();
 	}
 
+	printk (KERN_INFO "esp32c3 spi init!\n\n\n\n");
 	return ret;
 }
 

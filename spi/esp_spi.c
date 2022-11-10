@@ -362,11 +362,11 @@ static int spi_dev_init(int spi_clk_mhz)
 	struct spi_board_info esp_board = {{0}};
 	struct spi_master *master = NULL;
 
-	strlcpy(esp_board.modalias, "esp_spi", sizeof(esp_board.modalias));
+	strlcpy(esp_board.modalias, "esp32c3-spi", sizeof(esp_board.modalias));
 	esp_board.mode = SPI_MODE_2;
 	esp_board.max_speed_hz = spi_clk_mhz * NUMBER_1M;
 	esp_board.bus_num = 0;
-	esp_board.chip_select = 2;
+	esp_board.chip_select = 1;
 
 	master = spi_busnum_to_master(esp_board.bus_num);
 	if (!master) {
@@ -389,7 +389,7 @@ static int spi_dev_init(int spi_clk_mhz)
 	}
 
 	printk (KERN_INFO "ESP32 peripheral is registered to SPI bus [%d]"
-			",chip select [%d], SPI Clock [%d]\n", esp_board.bus_num,
+			",chip select [%d], SPI Clock [%d]\n\n\n", esp_board.bus_num,
 			esp_board.chip_select, spi_clk_mhz);
 
 	status = gpio_request(HANDSHAKE_PIN, "SPI_HANDSHAKE_PIN");
