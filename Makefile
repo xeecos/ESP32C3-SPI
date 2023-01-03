@@ -39,9 +39,6 @@ PWD := $(shell pwd)
 obj-m := $(MODULE_NAME).o
 $(MODULE_NAME)-y := main.o esp_stats.o esp_cmd.o esp_wpa_utils.o esp_cfg80211.o $(module_objects)
 
-ifeq ($(CONFIG_SUPPORT_ESP_SERIAL), y)
-	$(MODULE_NAME)-y += esp_serial.o esp_rb.o
-endif
 
 all: clean
 	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL) M=$(PWD) modules
