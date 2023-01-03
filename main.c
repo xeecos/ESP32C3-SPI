@@ -194,24 +194,24 @@ void print_capabilities(u32 cap)
 	else if (cap & ESP_WLAN_SPI_SUPPORT)
 		printk(KERN_INFO "\t * WLAN on SPI\n");
 
-	if ((cap & ESP_BT_UART_SUPPORT) ||
-		    (cap & ESP_BT_SDIO_SUPPORT) ||
-		    (cap & ESP_BT_SPI_SUPPORT)) {
-		printk(KERN_INFO "\t * BT/BLE\n");
-		if (cap & ESP_BT_UART_SUPPORT)
-			printk(KERN_INFO "\t   - HCI over UART\n");
-		if (cap & ESP_BT_SDIO_SUPPORT)
-			printk(KERN_INFO "\t   - HCI over SDIO\n");
-		if (cap & ESP_BT_SPI_SUPPORT)
-			printk(KERN_INFO "\t   - HCI over SPI\n");
+	// if ((cap & ESP_BT_UART_SUPPORT) ||
+	// 	    (cap & ESP_BT_SDIO_SUPPORT) ||
+	// 	    (cap & ESP_BT_SPI_SUPPORT)) {
+	// 	printk(KERN_INFO "\t * BT/BLE\n");
+	// 	if (cap & ESP_BT_UART_SUPPORT)
+	// 		printk(KERN_INFO "\t   - HCI over UART\n");
+	// 	if (cap & ESP_BT_SDIO_SUPPORT)
+	// 		printk(KERN_INFO "\t   - HCI over SDIO\n");
+	// 	if (cap & ESP_BT_SPI_SUPPORT)
+	// 		printk(KERN_INFO "\t   - HCI over SPI\n");
 
-		if ((cap & ESP_BLE_ONLY_SUPPORT) && (cap & ESP_BR_EDR_ONLY_SUPPORT))
-			printk(KERN_INFO "\t   - BT/BLE dual mode\n");
-		else if (cap & ESP_BLE_ONLY_SUPPORT)
-			printk(KERN_INFO "\t   - BLE only\n");
-		else if (cap & ESP_BR_EDR_ONLY_SUPPORT)
-			printk(KERN_INFO "\t   - BR EDR only\n");
-	}
+	// 	if ((cap & ESP_BLE_ONLY_SUPPORT) && (cap & ESP_BR_EDR_ONLY_SUPPORT))
+	// 		printk(KERN_INFO "\t   - BT/BLE dual mode\n");
+	// 	else if (cap & ESP_BLE_ONLY_SUPPORT)
+	// 		printk(KERN_INFO "\t   - BLE only\n");
+	// 	else if (cap & ESP_BR_EDR_ONLY_SUPPORT)
+	// 		printk(KERN_INFO "\t   - BR EDR only\n");
+	// }
 }
 
 void process_capabilities(struct esp_adapter *adapter)
@@ -219,14 +219,14 @@ void process_capabilities(struct esp_adapter *adapter)
 	printk(KERN_INFO "ESP peripheral capabilities: 0x%x\n", adapter->capabilities);
 
 	/* Reset BT */
-	esp_deinit_bt(adapter);
+	// esp_deinit_bt(adapter);
 
-	if ((adapter->capabilities & ESP_BT_SPI_SUPPORT) ||
-		(adapter->capabilities & ESP_BT_SDIO_SUPPORT)) {
-		msleep(200);
-		printk(KERN_INFO "ESP Bluetooth init\n");
-		esp_init_bt(adapter);
-	}
+	// if ((adapter->capabilities & ESP_BT_SPI_SUPPORT) ||
+	// 	(adapter->capabilities & ESP_BT_SDIO_SUPPORT)) {
+	// 	msleep(200);
+	// 	printk(KERN_INFO "ESP Bluetooth init\n");
+	// 	esp_init_bt(adapter);
+	// }
 }
 
 static int check_esp_version(struct fw_version *ver)
@@ -667,24 +667,26 @@ static void process_rx_packet(struct esp_adapter *adapter, struct sk_buff *skb)
 			dev_kfree_skb_any(skb);
 		}
 
-	} else if (payload_header->if_type == ESP_HCI_IF) {
-		if (hdev) {
+	} 
+// 	else if (payload_header->if_type == ESP_HCI_IF) {
+// 		if (hdev) {
 
-			type = skb->data;
-			hci_skb_pkt_type(skb) = *type;
-			skb_pull(skb, 1);
+// 			type = skb->data;
+// 			hci_skb_pkt_type(skb) = *type;
+// 			skb_pull(skb, 1);
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 13, 0))
-			if (hci_recv_frame(hdev, skb)) {
-#else
-			if (hci_recv_frame(skb)) {
-#endif
-				hdev->stat.err_rx++;
-			} else {
-				esp_hci_update_rx_counter(hdev, *type, skb->len);
-			}
-		}
-	} else if (payload_header->if_type == ESP_INTERNAL_IF) {
+// #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 13, 0))
+// 			if (hci_recv_frame(hdev, skb)) {
+// #else
+// 			if (hci_recv_frame(skb)) {
+// #endif
+// 				hdev->stat.err_rx++;
+// 			} else {
+// 				esp_hci_update_rx_counter(hdev, *type, skb->len);
+// 			}
+// 		}
+// 	} 
+	else if (payload_header->if_type == ESP_INTERNAL_IF) {
 
 		/* Queue event skb for processing in events workqueue */
 		skb_queue_tail(&adapter->events_skb_q, skb);
