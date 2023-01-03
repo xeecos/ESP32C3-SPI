@@ -498,6 +498,10 @@ static int spi_dev_init(int spi_clk_mhz)
 		printk (KERN_ERR "Failed to obtain GPIO for Handshake pin, err:%d\n",status);
 		return status;
 	}
+	else
+	{
+		printk (KERN_ERR "success to obtain GPIO for Handshake pin, err:%d\n",status);
+	}
 
 	status = gpio_direction_input(HANDSHAKE_PIN);
 
@@ -506,14 +510,22 @@ static int spi_dev_init(int spi_clk_mhz)
 		printk (KERN_ERR "Failed to set GPIO direction of Handshake pin, err: %d\n",status);
 		return status;
 	}
+	else
+	{
+		printk (KERN_ERR "success to set GPIO direction of Handshake pin, err: %d\n",status);
+	}
 
 	status = request_irq(SPI_IRQ, spi_interrupt_handler,
 			IRQF_SHARED | IRQF_TRIGGER_RISING,
-			"ESP_SPI", spi_context.esp_spi_dev);
+			"ESP32C3-SPI", spi_context.esp_spi_dev);
 	if (status) {
 		gpio_free(HANDSHAKE_PIN);
 		printk (KERN_ERR "Failed to request IRQ for Handshake pin, err:%d\n",status);
 		return status;
+	}
+	else
+	{
+		printk (KERN_ERR "success to request IRQ for Handshake pin, err: %d\n",status);
 	}
 
 	status = gpio_request(SPI_DATA_READY_PIN, "SPI_DATA_READY_PIN");
@@ -523,6 +535,10 @@ static int spi_dev_init(int spi_clk_mhz)
 		printk (KERN_ERR "Failed to obtain GPIO for Data ready pin, err:%d\n",status);
 		return status;
 	}
+	else
+	{
+		printk (KERN_ERR "success to obtain GPIO for Data ready pin, err: %d\n",status);
+	}
 
 	status = gpio_direction_input(SPI_DATA_READY_PIN);
 	if (status) {
@@ -531,6 +547,10 @@ static int spi_dev_init(int spi_clk_mhz)
 		gpio_free(SPI_DATA_READY_PIN);
 		printk (KERN_ERR "Failed to set GPIO direction of Data ready pin\n");
 		return status;
+	}
+	else
+	{
+		printk (KERN_ERR "success to set GPIO direction of Data ready pin, err: %d\n",status);
 	}
 
 	status = request_irq(SPI_DATA_READY_IRQ, spi_data_ready_interrupt_handler,
@@ -542,6 +562,10 @@ static int spi_dev_init(int spi_clk_mhz)
 		gpio_free(SPI_DATA_READY_PIN);
 		printk (KERN_ERR "Failed to request IRQ for Data ready pin, err:%d\n",status);
 		return status;
+	}
+	else
+	{
+		printk (KERN_ERR "success to request IRQ for Data ready pin, err: %d\n",status);
 	}
 	spi_context.spi_gpio_enabled = 1;
 
