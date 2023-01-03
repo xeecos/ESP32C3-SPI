@@ -601,12 +601,20 @@ static int spi_init(void)
 		printk (KERN_ERR "Failed Init SPI device\n");
 		return status;
 	}
+	else
+	{
+		printk (KERN_ERR "Success Init SPI device\n");
+	}
 
 	adapter = spi_context.adapter;
 
 	if (!adapter) {
 		spi_exit();
 		return -EFAULT;
+	}
+	else
+	{
+		printk (KERN_ERR "Success Init SPI adapter\n");
 	}
 
 	adapter->dev = &spi_context.esp_spi_dev->dev;
