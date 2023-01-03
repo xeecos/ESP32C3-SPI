@@ -33,7 +33,7 @@
 #include "esp_stats.h"
 
 #define HOST_GPIO_PIN_INVALID -1
-static int resetpin = HOST_GPIO_PIN_INVALID;
+static int resetpin = 98;
 extern u8 ap_bssid[MAC_ADDR_LEN];
 extern volatile u8 host_sleep;
 
