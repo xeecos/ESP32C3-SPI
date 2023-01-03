@@ -25,7 +25,7 @@
 #include "esp_kernel_port.h"
 #include "esp_stats.h"
 
-#define SPI_INITIAL_CLK_MHZ     10
+#define SPI_INITIAL_CLK_MHZ     30
 #define NUMBER_1M               1000000
 #define TX_MAX_PENDING_COUNT    100
 #define TX_RESUME_THRESHOLD     (TX_MAX_PENDING_COUNT/5)
@@ -462,8 +462,8 @@ static int spi_dev_init(int spi_clk_mhz)
 	struct spi_board_info esp_board = {{0}};
 	struct spi_master *master = NULL;
 
-	strlcpy(esp_board.modalias, "esp_spi", sizeof(esp_board.modalias));
-	esp_board.mode = SPI_MODE_2;
+	strlcpy(esp_board.modalias, "esp32c3_spi", sizeof(esp_board.modalias));
+	esp_board.mode = SPI_MODE_3;
 	esp_board.max_speed_hz = spi_clk_mhz * NUMBER_1M;
 	esp_board.bus_num = 1;
 	esp_board.chip_select = 1;
