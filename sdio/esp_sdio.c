@@ -26,7 +26,6 @@
 #include "esp_if.h"
 #include "esp_sdio_api.h"
 #include "esp_api.h"
-#include "esp_bt_api.h"
 #include <linux/kthread.h>
 #include <linux/printk.h>
 #include "esp_stats.h"

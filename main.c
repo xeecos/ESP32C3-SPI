@@ -25,7 +25,6 @@
 
 #include "esp.h"
 #include "esp_if.h"
-#include "esp_bt_api.h"
 #include "esp_api.h"
 #include "esp_cmd.h"
 #include "esp_kernel_port.h"
@@ -492,7 +491,6 @@ int esp_remove_card(struct esp_adapter *adapter)
 		return 0;
 	}
 
-	esp_deinit_bt(adapter);
 
 	esp_commands_teardown(adapter);
 
