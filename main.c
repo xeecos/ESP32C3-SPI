@@ -892,8 +892,8 @@ static int __init esp_init(void)
 
 	adapter = init_adapter();
 
-	if (!adapter)
-		return -EFAULT;
+	// if (!adapter)
+	// 	return -EFAULT;
 
 	/* Init transport layer */
 	ret = esp_init_interface_layer(adapter);
