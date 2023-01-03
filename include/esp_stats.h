@@ -17,14 +17,28 @@
  * this warranty disclaimer.
  */
 
-#ifndef __esp_bt_api_h_
-#define __esp_bt_api_h_
+#ifndef __ESP_STAT__H__
+#define __ESP_STAT__H__
 
 #include "esp.h"
 
-int esp_init_bt(struct esp_adapter *adapter);
-int esp_deinit_bt(struct esp_adapter *adapter);
-void esp_hci_update_tx_counter(struct hci_dev *hdev, u8 pkt_type, size_t len);
-void esp_hci_update_rx_counter(struct hci_dev *hdev, u8 pkt_type, size_t len);
+#ifdef CONFIG_TEST_RAW_TP
+#define TEST_RAW_TP 1
+#else
+#define TEST_RAW_TP 0
+#endif
+
+#if TEST_RAW_TP
+
+#define TEST_RAW_TP__BUF_SIZE    1460
+
+#define ESP_TEST_RAW_TP__RX      0
+#define ESP_TEST_RAW_TP__TX      1
+
+inline void esp_raw_tp_queue_resume(void);
+#endif
+
+void test_raw_tp_cleanup(void);
+void update_test_raw_tp_rx_stats(u16 len);
 
 #endif

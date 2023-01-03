@@ -18,10 +18,11 @@
 #define _ESP_SPI_H_
 
 #include "esp.h"
-
-#define HANDSHAKE_PIN           130
+//PD0  3*32+0
+#define HANDSHAKE_PIN           96
 #define SPI_IRQ                 gpio_to_irq(HANDSHAKE_PIN)
-#define SPI_DATA_READY_PIN      133
+//PD1  3*32+1
+#define SPI_DATA_READY_PIN      97
 #define SPI_DATA_READY_IRQ      gpio_to_irq(SPI_DATA_READY_PIN)
 #define SPI_BUF_SIZE            1600
 
@@ -32,6 +33,11 @@ struct esp_spi_context {
 	struct sk_buff_head         rx_q[MAX_PRIORITY_QUEUES];
 	struct workqueue_struct     *spi_workqueue;
 	struct work_struct          spi_work;
+	struct workqueue_struct     *nw_cmd_reinit_workqueue;
+	struct work_struct          nw_cmd_reinit_work;
+	uint8_t                     spi_clk_mhz;
+	uint8_t                     spi_gpio_enabled;
+	uint8_t                     reserved[2];
 };
 
 enum {

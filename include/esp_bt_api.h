@@ -17,12 +17,32 @@
  * this warranty disclaimer.
  */
 
-#ifndef _ESP_SERIAL_H_
-#define _ESP_SERIAL_H_
+#ifndef __esp_bt_api_h_
+#define __esp_bt_api_h_
 
-int esp_serial_init(void * priv);
-void esp_serial_cleanup(void);
-int esp_serial_reinit(void *priv);
+#include <linux/version.h>
+#include "esp.h"
 
-int esp_serial_data_received(int dev_index, const char *data, size_t len);
+
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 5, 0))
+	#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 34))
+		#define hci_skb_pkt_type(skb) bt_cb((skb))->pkt_type
+	#else
+        #error "ESP-Hosted solution doesn't supported below kernel version < 2.6.34"
+	#endif
+#endif
+
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 8, 0))
+	#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 34))
+		#define HCI_PRIMARY HCI_BREDR
+	#else
+        #error "ESP-Hosted solution doesn't supported below kernel version < 2.6.34"
+	#endif
+#endif
+
+int esp_init_bt(struct esp_adapter *adapter);
+int esp_deinit_bt(struct esp_adapter *adapter);
+void esp_hci_update_tx_counter(struct hci_dev *hdev, u8 pkt_type, size_t len);
+void esp_hci_update_rx_counter(struct hci_dev *hdev, u8 pkt_type, size_t len);
+
 #endif
