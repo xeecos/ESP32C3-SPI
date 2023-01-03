@@ -462,11 +462,11 @@ static int spi_dev_init(int spi_clk_mhz)
 	struct spi_board_info esp_board = {{0}};
 	struct spi_master *master = NULL;
 
-	strlcpy(esp_board.modalias, "esp32c3_spi", sizeof(esp_board.modalias));
-	esp_board.mode = SPI_MODE_2;
+	strlcpy(esp_board.modalias, "esp32c3-spi", sizeof(esp_board.modalias));
+	esp_board.mode = SPI_MODE_3;
 	esp_board.max_speed_hz = spi_clk_mhz * NUMBER_1M;
 	esp_board.bus_num = 1;
-	esp_board.chip_select = 0;
+	esp_board.chip_select = 1;
 
 	master = spi_busnum_to_master(esp_board.bus_num);
 	if (!master) {
