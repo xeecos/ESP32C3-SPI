@@ -24,13 +24,13 @@
 #include <net/cfg80211.h>
 #include <linux/version.h>
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 13, 0))
-    #define ESP_BT_SEND_FRAME_PROTOTYPE() \
-        int esp_bt_send_frame(struct sk_buff *skb)
-#else
-    #define ESP_BT_SEND_FRAME_PROTOTYPE() \
-        int esp_bt_send_frame(struct hci_dev* hdev, struct sk_buff *skb)
-#endif
+// #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 13, 0))
+//     #define ESP_BT_SEND_FRAME_PROTOTYPE() \
+//         int esp_bt_send_frame(struct sk_buff *skb)
+// #else
+//     #define ESP_BT_SEND_FRAME_PROTOTYPE() \
+//         int esp_bt_send_frame(struct hci_dev* hdev, struct sk_buff *skb)
+// #endif
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 14, 0)
 static inline void ether_addr_copy(u8 *dst, const u8 *src)

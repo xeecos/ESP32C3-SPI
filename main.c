@@ -578,7 +578,7 @@ static void process_rx_packet(struct esp_adapter *adapter, struct sk_buff *skb)
 	struct esp_payload_header *payload_header = NULL;
 	u16 len = 0, offset = 0;
 	u16 rx_checksum = 0, checksum = 0;
-	struct hci_dev *hdev = adapter->hcidev;
+	// struct hci_dev *hdev = adapter->hcidev;
 	u8 *type = NULL;
 	struct sk_buff * eap_skb = NULL;
 	struct ethhdr * eth = NULL;
