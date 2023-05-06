@@ -218,14 +218,6 @@ void process_capabilities(struct esp_adapter *adapter)
 	printk(KERN_INFO "ESP peripheral capabilities: 0x%x\n", adapter->capabilities);
 
 	/* Reset BT */
-	esp_deinit_bt(adapter);
-
-	if ((adapter->capabilities & ESP_BT_SPI_SUPPORT) ||
-		(adapter->capabilities & ESP_BT_SDIO_SUPPORT)) {
-		msleep(200);
-		printk(KERN_INFO "ESP Bluetooth init\n");
-		esp_init_bt(adapter);
-	}
 }
 
 static int check_esp_version(struct fw_version *ver)

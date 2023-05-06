@@ -22,7 +22,6 @@
 #include "esp_spi.h"
 #include "esp_if.h"
 #include "esp_api.h"
-#include "esp_bt_api.h"
 #include "esp_kernel_port.h"
 #include "esp_stats.h"
 
