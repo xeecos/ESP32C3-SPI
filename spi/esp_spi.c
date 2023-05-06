@@ -22,10 +22,11 @@
 #include "esp_spi.h"
 #include "esp_if.h"
 #include "esp_api.h"
+#include "esp_bt_api.h"
 #include "esp_kernel_port.h"
 #include "esp_stats.h"
 
-#define SPI_INITIAL_CLK_MHZ     30
+#define SPI_INITIAL_CLK_MHZ     10
 #define NUMBER_1M               1000000
 #define TX_MAX_PENDING_COUNT    100
 #define TX_RESUME_THRESHOLD     (TX_MAX_PENDING_COUNT/5)
@@ -278,8 +279,7 @@ void process_event_esp_bootup(struct esp_adapter *adapter, u8 *evt_buf, u8 len)
 				ESP_MARK_SCAN_DONE(priv, true);
 
 			if (priv->ndev &&
-			    priv->wdev.current_bss) {
-
+			    wireless_dev_current_bss_exists(&priv->wdev)) {
 				CFG80211_DISCONNECTED(priv->ndev,
 						0, NULL, 0, false, GFP_KERNEL);
 			}
@@ -456,6 +456,52 @@ static void esp_spi_work(struct work_struct *work)
 	mutex_unlock(&spi_lock);
 }
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,16,0))
+#include <linux/platform_device.h>
+static int __spi_controller_match(struct device *dev, const void *data)
+{
+	struct spi_controller *ctlr;
+	const u16 *bus_num = data;
+
+	ctlr = container_of(dev, struct spi_controller, dev);
+
+	if(!ctlr) {
+		return 0;
+	}
+
+	return ctlr->bus_num == *bus_num;
+}
+
+static struct spi_controller *spi_busnum_to_master(u16 bus_num)
+{
+	struct platform_device *pdev = NULL;
+	struct spi_master *master = NULL;
+	struct spi_controller *ctlr = NULL;
+	struct device *dev = NULL;
+
+	pdev = platform_device_alloc("pdev", PLATFORM_DEVID_NONE);
+	pdev->num_resources = 0;
+	platform_device_add(pdev);
+
+	master = spi_alloc_master(&pdev->dev, sizeof(void *));
+	if (!master) {
+		pr_err("Error: failed to allocate SPI master device\n");
+		platform_device_put(pdev);
+		return NULL;
+	}
+
+	dev = class_find_device(master->dev.class, NULL, &bus_num, __spi_controller_match);
+	if (dev) {
+		ctlr = container_of(dev, struct spi_controller, dev);
+	}
+
+	spi_master_put(master);
+	platform_device_put(pdev);
+
+	return ctlr;
+}
+#endif
+
 static int spi_dev_init(int spi_clk_mhz)
 {
 	int status = 0;
@@ -498,10 +544,6 @@ static int spi_dev_init(int spi_clk_mhz)
 		printk (KERN_ERR "Failed to obtain GPIO for Handshake pin, err:%d\n",status);
 		return status;
 	}
-	else
-	{
-		printk (KERN_ERR "success to obtain GPIO for Handshake pin, err:%d\n",status);
-	}
 
 	status = gpio_direction_input(HANDSHAKE_PIN);
 
@@ -509,10 +551,6 @@ static int spi_dev_init(int spi_clk_mhz)
 		gpio_free(HANDSHAKE_PIN);
 		printk (KERN_ERR "Failed to set GPIO direction of Handshake pin, err: %d\n",status);
 		return status;
-	}
-	else
-	{
-		printk (KERN_ERR "success to set GPIO direction of Handshake pin, err: %d\n",status);
 	}
 
 	status = request_irq(SPI_IRQ, spi_interrupt_handler,
@@ -523,10 +561,6 @@ static int spi_dev_init(int spi_clk_mhz)
 		printk (KERN_ERR "Failed to request IRQ for Handshake pin, err:%d\n",status);
 		return status;
 	}
-	else
-	{
-		printk (KERN_ERR "success to request IRQ for Handshake pin, err: %d\n",status);
-	}
 
 	status = gpio_request(SPI_DATA_READY_PIN, "SPI_DATA_READY_PIN");
 	if (status) {
@@ -534,10 +568,6 @@ static int spi_dev_init(int spi_clk_mhz)
 		free_irq(SPI_IRQ, spi_context.esp_spi_dev);
 		printk (KERN_ERR "Failed to obtain GPIO for Data ready pin, err:%d\n",status);
 		return status;
-	}
-	else
-	{
-		printk (KERN_ERR "success to obtain GPIO for Data ready pin, err: %d\n",status);
 	}
 
 	status = gpio_direction_input(SPI_DATA_READY_PIN);
@@ -547,10 +577,6 @@ static int spi_dev_init(int spi_clk_mhz)
 		gpio_free(SPI_DATA_READY_PIN);
 		printk (KERN_ERR "Failed to set GPIO direction of Data ready pin\n");
 		return status;
-	}
-	else
-	{
-		printk (KERN_ERR "success to set GPIO direction of Data ready pin, err: %d\n",status);
 	}
 
 	status = request_irq(SPI_DATA_READY_IRQ, spi_data_ready_interrupt_handler,
@@ -562,10 +588,6 @@ static int spi_dev_init(int spi_clk_mhz)
 		gpio_free(SPI_DATA_READY_PIN);
 		printk (KERN_ERR "Failed to request IRQ for Data ready pin, err:%d\n",status);
 		return status;
-	}
-	else
-	{
-		printk (KERN_ERR "success to request IRQ for Data ready pin, err: %d\n",status);
 	}
 	spi_context.spi_gpio_enabled = 1;
 
@@ -601,20 +623,12 @@ static int spi_init(void)
 		printk (KERN_ERR "Failed Init SPI device\n");
 		return status;
 	}
-	else
-	{
-		printk (KERN_ERR "Success Init SPI device\n");
-	}
 
 	adapter = spi_context.adapter;
 
 	if (!adapter) {
 		spi_exit();
 		return -EFAULT;
-	}
-	else
-	{
-		printk (KERN_ERR "Success Init SPI adapter\n");
 	}
 
 	adapter->dev = &spi_context.esp_spi_dev->dev;
