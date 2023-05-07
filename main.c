@@ -893,6 +893,7 @@ static int __init esp_init(void)
 		deinit_adapter();
 	}
 
+	printk(KERN_INFO "ESP Success\n");
 	return ret;
 }
 

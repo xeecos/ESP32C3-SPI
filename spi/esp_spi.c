@@ -25,7 +25,7 @@
 #include "esp_kernel_port.h"
 #include "esp_stats.h"
 
-#define SPI_INITIAL_CLK_MHZ     10
+#define SPI_INITIAL_CLK_MHZ     30
 #define NUMBER_1M               1000000
 #define TX_MAX_PENDING_COUNT    100
 #define TX_RESUME_THRESHOLD     (TX_MAX_PENDING_COUNT/5)
@@ -55,6 +55,7 @@ static void open_data_path(void)
 	atomic_set(&tx_pending, 0);
 	msleep(200);
 	data_path = OPEN_DATAPATH;
+	printk (KERN_ERR "open_data_path\n");
 }
 
 static void close_data_path(void)
@@ -508,10 +509,10 @@ static int spi_dev_init(int spi_clk_mhz)
 	struct spi_master *master = NULL;
 
 	strlcpy(esp_board.modalias, "esp32c3-spi", sizeof(esp_board.modalias));
-	esp_board.mode = SPI_MODE_3;
+	esp_board.mode = SPI_MODE_2;
 	esp_board.max_speed_hz = spi_clk_mhz * NUMBER_1M;
-	esp_board.bus_num = 1;
-	esp_board.chip_select = 1;
+	esp_board.bus_num = 0;
+	esp_board.chip_select = 0;
 
 	master = spi_busnum_to_master(esp_board.bus_num);
 	if (!master) {
@@ -632,11 +633,13 @@ static int spi_init(void)
 
 	adapter->dev = &spi_context.esp_spi_dev->dev;
 
+	printk (KERN_INFO "spi_init\n");
 	return status;
 }
 
 static void spi_exit(void)
 {
+	printk (KERN_ERR "spi_exit\n");
 	uint8_t prio_q_idx = 0;
 
 	disable_irq(SPI_IRQ);
