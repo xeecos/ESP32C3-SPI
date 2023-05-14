@@ -10,7 +10,7 @@ KERNEL := /lib/modules/$(shell uname -r)/build
 ARCH := arm
 
 #Default interface is sdio
-MODULE_NAME=esp32c3-spi
+MODULE_NAME=esp32c3
 
 #Targets passed overrrides default value
 
@@ -29,7 +29,7 @@ endif
 EXTRA_CFLAGS += -I$(PWD)/common/include -I$(PWD)
 
 
-ifeq ($(MODULE_NAME), esp32c3-spi)
+ifeq ($(MODULE_NAME), esp32c3)
 	EXTRA_CFLAGS += -I$(PWD)/spi
 	module_objects += spi/esp_spi.o
 endif

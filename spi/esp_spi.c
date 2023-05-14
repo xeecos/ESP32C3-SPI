@@ -508,7 +508,7 @@ static int spi_dev_init(int spi_clk_mhz)
 	struct spi_board_info esp_board = {{0}};
 	struct spi_master *master = NULL;
 
-	strlcpy(esp_board.modalias, "esp32c3-spi", sizeof(esp_board.modalias));
+	strlcpy(esp_board.modalias, "esp32c3", sizeof(esp_board.modalias));
 	esp_board.mode = SPI_MODE_2;
 	esp_board.max_speed_hz = spi_clk_mhz * NUMBER_1M;
 	esp_board.bus_num = 0;
@@ -555,7 +555,7 @@ static int spi_dev_init(int spi_clk_mhz)
 
 	status = request_irq(SPI_IRQ, spi_interrupt_handler,
 			IRQF_SHARED | IRQF_TRIGGER_RISING,
-			"ESP32C3-SPI", spi_context.esp_spi_dev);
+			"ESP32C3", spi_context.esp_spi_dev);
 	if (status) {
 		gpio_free(HANDSHAKE_PIN);
 		printk (KERN_ERR "Failed to request IRQ for Handshake pin, err:%d\n",status);
