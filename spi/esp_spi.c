@@ -213,7 +213,7 @@ void process_event_esp_bootup(struct esp_adapter *adapter, u8 *evt_buf, u8 len)
 
 		} else if (*pos == ESP_BOOTUP_SPI_CLK_MHZ){
 
-			adjust_spi_clock(*(pos + 2));
+			// adjust_spi_clock(*(pos + 2));
 			adapter->dev = &spi_context.esp_spi_dev->dev;
 
 		} else if (*pos == ESP_BOOTUP_FIRMWARE_CHIP_ID){
