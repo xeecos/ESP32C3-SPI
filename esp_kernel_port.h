@@ -209,7 +209,7 @@ void CFG80211_RX_ASSOC_RESP(struct net_device *dev,
 
 	cfg80211_rx_assoc_resp(dev, &resp);
 #else
-	cfg80211_rx_assoc_resp(dev, bss, buf, len, uapsd_queues, req_ies, req_ies_len)
+	cfg80211_rx_assoc_resp(dev, bss, buf, len, uapsd_queues, req_ies, req_ies_len);
 #endif
 }
 
