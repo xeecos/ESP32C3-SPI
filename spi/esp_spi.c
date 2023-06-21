@@ -19,6 +19,7 @@
 #include <linux/gpio.h>
 #include <linux/mutex.h>
 #include <linux/delay.h>
+#include <stdio.h>
 #include "esp_spi.h"
 #include "esp_if.h"
 #include "esp_api.h"
