@@ -514,7 +514,7 @@ static int spi_dev_init(int spi_clk_mhz)
 	esp_board.mode = SPI_MODE_3;
 	esp_board.max_speed_hz = spi_clk_mhz * NUMBER_1M;
 	esp_board.bus_num = 0;
-	esp_board.chip_select = 0;
+	esp_board.chip_select = 1;
 
 	master = spi_busnum_to_master(esp_board.bus_num);
 	if (!master) {
