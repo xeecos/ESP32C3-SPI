@@ -19,7 +19,6 @@
 
 #include "esp_cmd.h"
 #include "esp_api.h"
-#include <stdio.h>
 #include "esp_wpa_utils.h"
 #include "esp.h"
 #include "esp_cfg80211.h"
