@@ -78,12 +78,12 @@ static int process_tx_packet (struct sk_buff *skb)
 
 	if (!priv) {
 		dev_kfree_skb(skb);
-		printk(KERN_INFO "%s: no priv\n", __func__);
+		printf("%s: no priv\n", __func__);
 		return NETDEV_TX_OK;
 	}
 
 	if (netif_queue_stopped((const struct net_device *) priv->ndev)) {
-		printk(KERN_INFO "%s: Netif queue stopped\n", __func__);
+		printf("%s: Netif queue stopped\n", __func__);
 		return NETDEV_TX_BUSY;
 	}
 
@@ -187,42 +187,42 @@ void esp_port_close(struct esp_wifi_device * priv)
 
 void print_capabilities(u32 cap)
 {
-	printk(KERN_INFO "Capabilities: 0x%x. Features supported are:\n", cap);
+	printf("Capabilities: 0x%x. Features supported are:\n", cap);
 	if (cap & ESP_WLAN_SDIO_SUPPORT)
-		printk(KERN_INFO "\t * WLAN on SDIO\n");
+		printf("\t * WLAN on SDIO\n");
 	else if (cap & ESP_WLAN_SPI_SUPPORT)
-		printk(KERN_INFO "\t * WLAN on SPI\n");
+		printf("\t * WLAN on SPI\n");
 
 	// if ((cap & ESP_BT_UART_SUPPORT) ||
 	// 	    (cap & ESP_BT_SDIO_SUPPORT) ||
 	// 	    (cap & ESP_BT_SPI_SUPPORT)) {
-	// 	printk(KERN_INFO "\t * BT/BLE\n");
+	// 	printf("\t * BT/BLE\n");
 	// 	if (cap & ESP_BT_UART_SUPPORT)
-	// 		printk(KERN_INFO "\t   - HCI over UART\n");
+	// 		printf("\t   - HCI over UART\n");
 	// 	if (cap & ESP_BT_SDIO_SUPPORT)
-	// 		printk(KERN_INFO "\t   - HCI over SDIO\n");
+	// 		printf("\t   - HCI over SDIO\n");
 	// 	if (cap & ESP_BT_SPI_SUPPORT)
-	// 		printk(KERN_INFO "\t   - HCI over SPI\n");
+	// 		printf("\t   - HCI over SPI\n");
 
 	// 	if ((cap & ESP_BLE_ONLY_SUPPORT) && (cap & ESP_BR_EDR_ONLY_SUPPORT))
-	// 		printk(KERN_INFO "\t   - BT/BLE dual mode\n");
+	// 		printf("\t   - BT/BLE dual mode\n");
 	// 	else if (cap & ESP_BLE_ONLY_SUPPORT)
-	// 		printk(KERN_INFO "\t   - BLE only\n");
+	// 		printf("\t   - BLE only\n");
 	// 	else if (cap & ESP_BR_EDR_ONLY_SUPPORT)
-	// 		printk(KERN_INFO "\t   - BR EDR only\n");
+	// 		printf("\t   - BR EDR only\n");
 	// }
 }
 
 void process_capabilities(struct esp_adapter *adapter)
 {
-	printk(KERN_INFO "ESP peripheral capabilities: 0x%x\n", adapter->capabilities);
+	printf("ESP peripheral capabilities: 0x%x\n", adapter->capabilities);
 
 	/* Reset BT */
 }
 
 static int check_esp_version(struct fw_version *ver)
 {
-	printk(KERN_INFO "esp32: ESP Firmware version: %u.%u.%u\n",
+	printf("esp32: ESP Firmware version: %u.%u.%u\n",
 			ver->major1, ver->major2, ver->minor);
 	if (!ver->major1) {
 		printk(KERN_ERR "Incompatible ESP firmware release detected, Please use correct ESP-Hosted branch/compatible release\n");
@@ -235,22 +235,22 @@ static void print_reset_reason(uint32_t reason)
 {
 	switch (reason)
 	{
-		case 1 : printk(KERN_INFO  "POWERON_RESET\n");break;          /**<1, Vbat power on reset*/
-		case 3 : printk(KERN_INFO  "SW_RESET\n");break;               /**<3, Software reset digital core*/
-		case 4 : printk(KERN_INFO  "OWDT_RESET\n");break;             /**<4, Legacy watch dog reset digital core*/
-		case 5 : printk(KERN_INFO  "DEEPSLEEP_RESET\n");break;        /**<5, Deep Sleep reset digital core*/
-		case 6 : printk(KERN_INFO  "SDIO_RESET\n");break;             /**<6, Reset by SLC module, reset digital core*/
-		case 7 : printk(KERN_INFO  "TG0WDT_SYS_RESET\n");break;       /**<7, Timer Group0 Watch dog reset digital core*/
-		case 8 : printk(KERN_INFO  "TG1WDT_SYS_RESET\n");break;       /**<8, Timer Group1 Watch dog reset digital core*/
-		case 9 : printk(KERN_INFO  "RTCWDT_SYS_RESET\n");break;       /**<9, RTC Watch dog Reset digital core*/
-		case 10 : printk(KERN_INFO  "INTRUSION_RESET\n");break;       /**<10, Instrusion tested to reset CPU*/
-		case 11 : printk(KERN_INFO  "TGWDT_CPU_RESET\n");break;       /**<11, Time Group reset CPU*/
-		case 12 : printk(KERN_INFO  "SW_CPU_RESET\n");break;          /**<12, Software reset CPU*/
-		case 13 : printk(KERN_INFO  "RTCWDT_CPU_RESET\n");break;      /**<13, RTC Watch dog Reset CPU*/
-		case 14 : printk(KERN_INFO  "EXT_CPU_RESET\n");break;         /**<14, for APP CPU, reseted by PRO CPU*/
-		case 15 : printk(KERN_INFO  "RTCWDT_BROWN_OUT_RESET\n");break;/**<15, Reset when the vdd voltage is not stable*/
-		case 16 : printk(KERN_INFO  "RTCWDT_RTC_RESET\n");break;      /**<16, RTC Watch dog reset digital core and rtc module*/
-		default : printk(KERN_INFO  "Unknown[%u]\n",reason);break;
+		case 1 : printf( "POWERON_RESET\n");break;          /**<1, Vbat power on reset*/
+		case 3 : printf( "SW_RESET\n");break;               /**<3, Software reset digital core*/
+		case 4 : printf( "OWDT_RESET\n");break;             /**<4, Legacy watch dog reset digital core*/
+		case 5 : printf( "DEEPSLEEP_RESET\n");break;        /**<5, Deep Sleep reset digital core*/
+		case 6 : printf( "SDIO_RESET\n");break;             /**<6, Reset by SLC module, reset digital core*/
+		case 7 : printf( "TG0WDT_SYS_RESET\n");break;       /**<7, Timer Group0 Watch dog reset digital core*/
+		case 8 : printf( "TG1WDT_SYS_RESET\n");break;       /**<8, Timer Group1 Watch dog reset digital core*/
+		case 9 : printf( "RTCWDT_SYS_RESET\n");break;       /**<9, RTC Watch dog Reset digital core*/
+		case 10 : printf( "INTRUSION_RESET\n");break;       /**<10, Instrusion tested to reset CPU*/
+		case 11 : printf( "TGWDT_CPU_RESET\n");break;       /**<11, Time Group reset CPU*/
+		case 12 : printf( "SW_CPU_RESET\n");break;          /**<12, Software reset CPU*/
+		case 13 : printf( "RTCWDT_CPU_RESET\n");break;      /**<13, RTC Watch dog Reset CPU*/
+		case 14 : printf( "EXT_CPU_RESET\n");break;         /**<14, for APP CPU, reseted by PRO CPU*/
+		case 15 : printf( "RTCWDT_BROWN_OUT_RESET\n");break;/**<15, Reset when the vdd voltage is not stable*/
+		case 16 : printf( "RTCWDT_RTC_RESET\n");break;      /**<16, RTC Watch dog reset digital core and rtc module*/
+		default : printf( "Unknown[%u]\n",reason);break;
 	}
 }
 
@@ -261,7 +261,7 @@ int process_fw_data(struct fw_data *fw_p)
 		return -1;
 	}
 
-	printk(KERN_INFO "esp32: %s ESP chipset's last reset cause: ", __func__);
+	printf("esp32: %s ESP chipset's last reset cause: ", __func__);
 	print_reset_reason(le32_to_cpu(fw_p->last_reset_reason));
 	return check_esp_version(&fw_p->version);
 }
@@ -297,7 +297,7 @@ static int esp_set_mac_address(struct net_device *ndev, void *data)
 	if (!priv || !priv->adapter)
 		return -EINVAL;
 
-	printk(KERN_INFO "%s:%u %pM\n", __func__, __LINE__, priv->mac_address);
+	printf("%s:%u %pM\n", __func__, __LINE__, priv->mac_address);
 	eth_hw_addr_set(ndev, priv->mac_address/*mac_addr->sa_data*/);
 
 	return 0;
@@ -319,7 +319,7 @@ static void esp_set_rx_mode(struct net_device *ndev)
 #endif
 	netdev_for_each_mc_addr(mac_addr, ndev) {
 		if (count < MAX_MULTICAST_ADDR_COUNT) {
-			/*printk(KERN_INFO "%d: %pM\n", count+1, mac_addr->addr);*/
+			/*printf("%d: %pM\n", count+1, mac_addr->addr);*/
 			memcpy(&mcast_list.mcast_addr[count++], mac_addr->addr, ETH_ALEN);
 		}
 	}
@@ -401,7 +401,7 @@ static int add_network_iface(void)
 	struct wireless_dev * wdev = NULL;
 
 	if (!adapter) {
-		printk(KERN_INFO "%s: adapter not yet init\n", __func__);
+		printf("%s: adapter not yet init\n", __func__);
 		return -EINVAL;
 	}
 
@@ -523,16 +523,16 @@ static void process_esp_bootup_event(struct esp_adapter *adapter,
 		struct esp_internal_bootup_event *evt)
 {
 	if (!adapter || !evt) {
-		printk(KERN_ERR "%s: Invalid arguments\n", __func__);
+		printf("%s: Invalid arguments\n", __func__);
 		return;
 	}
 
 	if (evt->header.status) {
-		printk(KERN_ERR "%s: Incorrect ESP bootup event\n", __func__);
+		printf("%s: Incorrect ESP bootup event\n", __func__);
 		return;
 	}
 
-	printk (KERN_INFO "\nReceived ESP bootup event\n");
+	printf("\nReceived ESP bootup event\n");
 	process_event_esp_bootup(adapter, evt->data, evt->len);
 }
 
@@ -542,7 +542,7 @@ static int process_internal_event(struct esp_adapter *adapter,
 	struct event_header *header = NULL;
 
 	if (!skb || !adapter) {
-		printk (KERN_ERR "esp32: Incorrect event data!\n");
+		printf("esp32: Incorrect event data!\n");
 		return -1;
 	}
 
@@ -556,7 +556,7 @@ static int process_internal_event(struct esp_adapter *adapter,
 		break;
 
 	default:
-		printk(KERN_INFO "%s:%u unhandled internal event[%u]\n",
+		printf("%s:%u unhandled internal event[%u]\n",
 				__func__, __LINE__, header->event_code);
 		break;
 	}
@@ -615,18 +615,18 @@ static void process_rx_packet(struct esp_adapter *adapter, struct sk_buff *skb)
 		}
 
 		if (payload_header->packet_type == PACKET_TYPE_EAPOL) {
-			printk(KERN_INFO "%s: Rx PACKET_TYPE_EAPOL!!!!\n", __func__);
+			printf("%s: Rx PACKET_TYPE_EAPOL!!!!\n", __func__);
 			esp_port_open(priv);
 
 			eap_skb = alloc_skb(skb->len + ETH_HLEN, GFP_KERNEL);
 			if(!eap_skb) {
-				printk(KERN_INFO "%s:%u memory alloc failed\n",__func__, __LINE__);
+				printf("%s:%u memory alloc failed\n",__func__, __LINE__);
 				return;
 			}
 			eap_skb->dev = priv->ndev;
 
 			if (!IS_ALIGNED((unsigned long) eap_skb->data, SKB_DATA_ADDR_ALIGNMENT)) {
-				printk(KERN_INFO "%s:%u eap skb unaligned\n",__func__, __LINE__);
+				printf("%s:%u eap skb unaligned\n",__func__, __LINE__);
 			}
 
 			eth = (struct ethhdr *) skb_put(eap_skb, ETH_HLEN);
@@ -893,7 +893,7 @@ static int __init esp_init(void)
 		deinit_adapter();
 	}
 
-	printk(KERN_INFO "ESP Init Result:%d\n",ret);
+	printf("ESP Init Result:%d\n",ret);
 	return ret;
 }
 
