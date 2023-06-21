@@ -37,7 +37,7 @@
 
 #define CHECK_SDIO_RW_ERROR(ret) do {			\
 	if (ret)						\
-	printk(KERN_ERR "%s: CMD53 read/write error at %d\n", __func__, __LINE__);	\
+	printf( "%s: CMD53 read/write error at %d\n", __func__, __LINE__);	\
 } while (0);
 
 struct esp_sdio_context sdio_context;
@@ -205,7 +205,7 @@ static int esp_get_len_from_slave(struct esp_sdio_context *context, u32 *rx_size
 		*len = temp + *len;
 
 		if (*len > ESP_RX_BUFFER_SIZE) {
-			printk(KERN_INFO "%s: Len from slave[%d] exceeds max [%d]\n",
+			printf("%s: Len from slave[%d] exceeds max [%d]\n",
 					__func__, *len, ESP_RX_BUFFER_SIZE);
 		}
 	}
@@ -232,7 +232,7 @@ static void flush_sdio(struct esp_sdio_context *context)
 		}
 
 		if (skb->len)
-			printk (KERN_INFO "%s: Flushed %d bytes\n", __func__, skb->len);
+			printf("%s: Flushed %d bytes\n", __func__, skb->len);
 		dev_kfree_skb(skb);
 		skb = NULL;
 	}
@@ -305,9 +305,9 @@ static int get_firmware_data(struct esp_sdio_context *context)
 		return ret;
 	}
 
-	printk(KERN_INFO "Rx Pre ====== %d\n", context->rx_byte_count);
+	printf("Rx Pre ====== %d\n", context->rx_byte_count);
 	context->rx_byte_count = *val & ESP_SLAVE_LEN_MASK;
-	printk(KERN_INFO "Rx Pos ======  %d\n", context->rx_byte_count);
+	printf("Rx Pos ======  %d\n", context->rx_byte_count);
 
 	/* Initialize tx_buffer_count */
 	ret = esp_read_reg(context, ESP_SLAVE_TOKEN_RDATA, (u8 *) val,
@@ -319,13 +319,13 @@ static int get_firmware_data(struct esp_sdio_context *context)
 	}
 
 	*val = ((*val >> 16) & ESP_TX_BUFFER_MASK);
-	printk(KERN_INFO "Tx Pre ======  %d\n", context->tx_buffer_count);
+	printf("Tx Pre ======  %d\n", context->tx_buffer_count);
 
 	if (*val >= ESP_MAX_BUF_CNT)
 		context->tx_buffer_count = (*val) - ESP_MAX_BUF_CNT;
 	else
 		context->tx_buffer_count = 0;
-	printk(KERN_INFO "Tx Pos ======  %d\n", context->tx_buffer_count);
+	printf("Tx Pos ======  %d\n", context->tx_buffer_count);
 
 	kfree(val);
 	return ret;
@@ -347,7 +347,7 @@ static int init_context(struct esp_sdio_context *context)
 	context->adapter = esp_get_adapter();
 
 	if (unlikely(!context->adapter))
-		printk (KERN_ERR "%s: Failed to get adapter\n", __func__);
+		printf("%s: Failed to get adapter\n", __func__);
 
 	for (prio_q_idx=0; prio_q_idx<MAX_PRIORITY_QUEUES; prio_q_idx++) {
 		skb_queue_head_init(&(sdio_context.tx_q[prio_q_idx]));
@@ -368,14 +368,14 @@ static struct sk_buff * read_packet(struct esp_adapter *adapter)
 	struct esp_sdio_context *context;
 
 	if (!adapter || !adapter->if_context) {
-		printk (KERN_ERR "%s: INVALID args\n", __func__);
+		printf("%s: INVALID args\n", __func__);
 		return NULL;
 	}
 
 	context = adapter->if_context;
 
 	if(!context ||  (context->state != ESP_CONTEXT_READY) || !context->func) {
-		printk(KERN_ERR "Invalid context/state\n");
+		printf( "Invalid context/state\n");
 		return NULL;
 	}
 
@@ -394,13 +394,13 @@ static struct sk_buff * read_packet(struct esp_adapter *adapter)
 	size = ESP_BLOCK_SIZE * 4;
 
 	if (len_from_slave > size) {
-		printk(KERN_INFO "Rx large packet: %d\n", len_from_slave);
+		printf("Rx large packet: %d\n", len_from_slave);
 	}
 
 	skb = esp_alloc_skb(len_from_slave);
 
 	if (!skb) {
-		printk (KERN_ERR "%s: SKB alloc failed\n", __func__);
+		printf("%s: SKB alloc failed\n", __func__);
 		sdio_release_host(context->func);
 		return NULL;
 	}
@@ -433,7 +433,7 @@ static struct sk_buff * read_packet(struct esp_adapter *adapter)
 		}
 
 		if (ret) {
-			printk (KERN_ERR "%s: Failed to read data - %d [%u - %d]\n", __func__, ret, num_blocks, len_to_read);
+			printf("%s: Failed to read data - %d [%u - %d]\n", __func__, ret, num_blocks, len_to_read);
 			dev_kfree_skb(skb);
 			skb = NULL;
 			sdio_release_host(context->func);
@@ -460,7 +460,7 @@ static int write_packet(struct esp_adapter *adapter, struct sk_buff *skb)
 	uint8_t prio = PRIO_Q_LOW;
 
 	if (!adapter || !adapter->if_context || !skb || !skb->data || !skb->len) {
-		printk(KERN_ERR "%s: Invalid args\n", __func__);
+		printf( "%s: Invalid args\n", __func__);
 		if(skb) {
 			dev_kfree_skb(skb);
 			skb = NULL;
@@ -470,7 +470,7 @@ static int write_packet(struct esp_adapter *adapter, struct sk_buff *skb)
 	}
 
 	if (skb->len > max_pkt_size) {
-		printk(KERN_ERR "%s: Drop pkt of len[%u] > max SDIO transport len[%u]\n",
+		printf( "%s: Drop pkt of len[%u] > max SDIO transport len[%u]\n",
 				__func__, skb->len, max_pkt_size);
 		dev_kfree_skb(skb);
 		skb = NULL;
@@ -482,7 +482,7 @@ static int write_packet(struct esp_adapter *adapter, struct sk_buff *skb)
 		esp_tx_pause(cb->priv);
 		dev_kfree_skb(skb);
 		skb = NULL;
-/*		printk(KERN_ERR "%s: TX Pause busy", __func__);*/
+/*		printf( "%s: TX Pause busy", __func__);*/
 		return -EBUSY;
 	}
 
@@ -561,7 +561,7 @@ static int tx_process(void *data)
 
 		if (context->state != ESP_CONTEXT_READY) {
 			msleep(10);
-			printk(KERN_ERR "%s: not ready", __func__);
+			printf( "%s: not ready", __func__);
 			continue;
 		}
 
@@ -591,7 +591,7 @@ static int tx_process(void *data)
 			atomic_dec(&queue_items[PRIO_Q_LOW]);
 		} else {
 #if 0
-			printk(KERN_ERR "%s: not ready 2 [%d %d]\n", __func__,
+			printf( "%s: not ready 2 [%d %d]\n", __func__,
 					atomic_read(&queue_items[PRIO_Q_OTHERS]),
 					atomic_read(&queue_items[PRIO_Q_SERIAL]));
 #endif
@@ -638,7 +638,7 @@ static int tx_process(void *data)
 					pos, (len_to_send + 3) & (~3), ACQUIRE_LOCK);
 
 			if (ret) {
-				printk (KERN_ERR "%s: Failed to send data: %d %d %d\n", __func__, ret, len_to_send, data_left);
+				printf("%s: Failed to send data: %d %d %d\n", __func__, ret, len_to_send, data_left);
 				break;
 			}
 
@@ -729,7 +729,7 @@ static int monitor_process(void *data)
 
 		if (len_reg > context->rx_byte_count) {
 			if (old_len && (context->rx_byte_count == old_len)) {
-				printk (KERN_DEBUG "Monitor thread ----> [%d - %d] [%d - %d] %d\n",
+				printf("Monitor thread ----> [%d - %d] [%d - %d] %d\n",
 						len_reg, context->rx_byte_count,
 						rdata, context->tx_buffer_count, intr);
 
@@ -739,7 +739,7 @@ static int monitor_process(void *data)
 					continue;
 
 				if (skb->len)
-					printk (KERN_DEBUG "%s: Flushed %d bytes\n", __func__, skb->len);
+					printf("%s: Flushed %d bytes\n", __func__, skb->len);
 
 				/* drop the packet */
 				dev_kfree_skb(skb);
@@ -765,7 +765,7 @@ static int esp_probe(struct sdio_func *func,
 		return -EINVAL;
 	}
 
-	printk(KERN_INFO "%s: ESP network device detected\n", __func__);
+	printf("%s: ESP network device detected\n", __func__);
 
 	context = init_sdio_func(func);
 
@@ -784,7 +784,7 @@ static int esp_probe(struct sdio_func *func,
 	tx_thread = kthread_run(tx_process, context->adapter, "esp32_TX");
 
 	if (!tx_thread)
-		printk (KERN_ERR "Failed to create esp32_sdio TX thread\n");
+		printf("Failed to create esp32_sdio TX thread\n");
 
 	context->adapter->dev = &func->dev;
 	generate_slave_intr(context, BIT(ESP_OPEN_DATA_PATH));
@@ -794,7 +794,7 @@ static int esp_probe(struct sdio_func *func,
 	monitor_thread = kthread_run(monitor_process, context, "Monitor process");
 
 	if (!monitor_thread)
-		printk (KERN_ERR "Failed to create monitor thread\n");
+		printf("Failed to create monitor thread\n");
 #endif
 
 	return ret;
@@ -806,19 +806,19 @@ static int esp_suspend(struct device *dev)
 	struct esp_sdio_context *context = NULL;
 
 	if (!dev) {
-		printk(KERN_INFO "Failed to inform ESP that host is suspending\n");
+		printf("Failed to inform ESP that host is suspending\n");
 		return -1;
 	}
 
 	func = dev_to_sdio_func(dev);
 
-	printk(KERN_INFO "----> Host Suspend\n");
+	printf("----> Host Suspend\n");
 	msleep(1000);
 
 	context = sdio_get_drvdata(func);
 
 	if (!context) {
-		printk(KERN_INFO "Failed to inform ESP that host is suspending\n");
+		printf("Failed to inform ESP that host is suspending\n");
 		return -1;
 	}
 
@@ -842,13 +842,13 @@ static int esp_resume(struct device *dev)
 	struct esp_sdio_context *context = NULL;
 
 	if (!dev) {
-		printk(KERN_INFO "Failed to inform ESP that host is awake\n");
+		printf("Failed to inform ESP that host is awake\n");
 		return -1;
 	}
 
 	func = dev_to_sdio_func(dev);
 
-	printk(KERN_INFO "-----> Host Awake\n");
+	printf("-----> Host Awake\n");
 #if 0
 	/* Host woke up.. Disable OOB IRQ */
 	disable_irq_wake(SDIO_OOB_IRQ);
@@ -859,7 +859,7 @@ static int esp_resume(struct device *dev)
 	context = sdio_get_drvdata(func);
 
 	if (!context) {
-		printk(KERN_INFO "Failed to inform ESP that host is awake\n");
+		printf("Failed to inform ESP that host is awake\n");
 		return -1;
 	}
 
@@ -918,7 +918,7 @@ void process_event_esp_bootup(struct esp_adapter *adapter, u8 *evt_buf, u8 len)
 	while (len_left) {
 		tag_len = *(pos + 1);
 
-		printk(KERN_INFO "EVENT: %d\n", *pos);
+		printf("EVENT: %d\n", *pos);
 
 		if (*pos == ESP_BOOTUP_CAPABILITY) {
 
@@ -928,7 +928,7 @@ void process_event_esp_bootup(struct esp_adapter *adapter, u8 *evt_buf, u8 len)
 
 		} else if (*pos == ESP_BOOTUP_FIRMWARE_CHIP_ID){
 
-			printk(KERN_INFO "ESP chipset detected [%s]\n",
+			printf("ESP chipset detected [%s]\n",
 				*(pos+2)==ESP_FIRMWARE_CHIP_ESP32 ? "esp32":
 				*(pos+2)==ESP_FIRMWARE_CHIP_ESP32S2 ? "esp32-s2" :
 				*(pos+2)==ESP_FIRMWARE_CHIP_ESP32C3 ? "esp32-c3" :
@@ -936,7 +936,7 @@ void process_event_esp_bootup(struct esp_adapter *adapter, u8 *evt_buf, u8 len)
 				"unknown");
 
 			if (*(pos+2)!=ESP_FIRMWARE_CHIP_ESP32)
-				printk(KERN_ERR "SDIO is only supported with ESP32\n");
+				printf( "SDIO is only supported with ESP32\n");
 
 		} else if (*pos == ESP_BOOTUP_TEST_RAW_TP) {
 			process_test_capabilities(*(pos + 2));
@@ -944,7 +944,7 @@ void process_event_esp_bootup(struct esp_adapter *adapter, u8 *evt_buf, u8 len)
 		} else if (*pos == ESP_BOOTUP_FW_DATA) {
 
 			if (tag_len != sizeof(struct fw_data))
-				printk(KERN_INFO "Length not matching to firmware data size\n");
+				printf("Length not matching to firmware data size\n");
 			else
 				if (process_fw_data((struct fw_data*)(pos + 2)))
 					if (context->func) {
@@ -953,7 +953,7 @@ void process_event_esp_bootup(struct esp_adapter *adapter, u8 *evt_buf, u8 len)
 					}
 
 		} else {
-			printk (KERN_WARNING "Unsupported tag in event");
+			printf("Unsupported tag in event");
 		}
 
 		pos += (tag_len+2);
@@ -961,7 +961,7 @@ void process_event_esp_bootup(struct esp_adapter *adapter, u8 *evt_buf, u8 len)
 	}
 
 	if (esp_add_card(adapter)) {
-		printk(KERN_ERR "network iterface init failed\n");
+		printf( "network iterface init failed\n");
 		generate_slave_intr(context, BIT(ESP_CLOSE_DATA_PATH));
 	}
 }

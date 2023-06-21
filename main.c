@@ -111,14 +111,14 @@ static int process_tx_packet (struct sk_buff *skb)
 		if (skb_linearize(skb)) {
 			priv->stats.tx_errors++;
 			dev_kfree_skb(skb);
-			printk(KERN_ERR "%s: Failed to linearize SKB", __func__);
+			printf( "%s: Failed to linearize SKB", __func__);
 			return NETDEV_TX_OK;
 		}
 
 		new_skb = esp_alloc_skb(skb->len + pad_len);
 
 		if (!new_skb) {
-			printk(KERN_ERR "%s: Failed to allocate SKB", __func__);
+			printf( "%s: Failed to allocate SKB", __func__);
 			priv->stats.tx_errors++;
 			dev_kfree_skb(skb);
 			return NETDEV_TX_OK;
@@ -156,7 +156,7 @@ static int process_tx_packet (struct sk_buff *skb)
 		ret = esp_send_packet(priv->adapter, skb);
 
 		if (ret) {
-/*			printk(KERN_ERR "%s: Failed to send SKB", __func__);*/
+/*			printf( "%s: Failed to send SKB", __func__);*/
 			priv->stats.tx_errors++;
 		} else {
 			priv->stats.tx_packets++;
@@ -225,7 +225,7 @@ static int check_esp_version(struct fw_version *ver)
 	printf("esp32: ESP Firmware version: %u.%u.%u\n",
 			ver->major1, ver->major2, ver->minor);
 	if (!ver->major1) {
-		printk(KERN_ERR "Incompatible ESP firmware release detected, Please use correct ESP-Hosted branch/compatible release\n");
+		printf( "Incompatible ESP firmware release detected, Please use correct ESP-Hosted branch/compatible release\n");
 		return -1;
 	}
 	return 0;
@@ -257,7 +257,7 @@ static void print_reset_reason(uint32_t reason)
 int process_fw_data(struct fw_data *fw_p)
 {
 	if (!fw_p) {
-		printk(KERN_ERR "Incomplete/incorrect bootup event received\n");
+		printf( "Incomplete/incorrect bootup event received\n");
 		return -1;
 	}
 
@@ -328,14 +328,14 @@ static void esp_set_rx_mode(struct net_device *ndev)
 	mcast_list.addr_count = count;
 
 	if (priv->port_open) {
-		/*printk (KERN_INFO "Set Multicast list\n");*/
+		/*printf("Set Multicast list\n");*/
 		if (adapter.mac_filter_wq)
 			queue_work(adapter.mac_filter_wq, &adapter.mac_flter_work);
 	}
 #if 0
 	cmd_set_mcast_mac_list(priv, &mcast_list);
 	while(ip_list) {
-		printk(KERN_DEBUG " IP MC Address: 0x%x\n", ip_list->multiaddr);
+		printf(" IP MC Address: 0x%x\n", ip_list->multiaddr);
 		ip_list = ip_list->next;
 	}
 #endif
@@ -358,13 +358,13 @@ static int esp_hard_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 
 	if (!priv->port_open) {
 		priv->stats.tx_dropped++;
-		/*printk(KERN_ERR "esp32: %s: port not yet open\n", __func__);*/
+		/*printf( "esp32: %s: port not yet open\n", __func__);*/
 		dev_kfree_skb(skb);
 		return NETDEV_TX_OK;
 	}
 
 	if (!skb->len || (skb->len > ETH_FRAME_LEN)) {
-		printk(KERN_ERR "esp32: %s: Bad len %d\n", __func__, skb->len);
+		printf( "esp32: %s: Bad len %d\n", __func__, skb->len);
 		priv->stats.tx_dropped++;
 		dev_kfree_skb(skb);
 		return NETDEV_TX_OK;
@@ -407,7 +407,7 @@ static int add_network_iface(void)
 
 	ret = esp_cfg80211_register(adapter);
 	if (ret) {
-		printk(KERN_ERR "Failed to register with cfg80211 (err code 0x%x)\n", ret);
+		printf( "Failed to register with cfg80211 (err code 0x%x)\n", ret);
 		return ret;
 	}
 
@@ -609,7 +609,7 @@ static void process_rx_packet(struct esp_adapter *adapter, struct sk_buff *skb)
 		priv = get_priv_from_payload_header(payload_header);
 
 		if (!priv) {
-			printk(KERN_ERR "%s: empty priv\n", __func__);
+			printf( "%s: empty priv\n", __func__);
 			dev_kfree_skb_any(skb);
 			return;
 		}
@@ -766,7 +766,7 @@ static int esp_get_packets(struct esp_adapter *adapter)
 int esp_send_packet(struct esp_adapter *adapter, struct sk_buff *skb)
 {
 	if (!adapter || !adapter->if_ops || !adapter->if_ops->write) {
-		printk(KERN_ERR "esp32: %s:%u adapter: %p\n", __func__, __LINE__, adapter);
+		printf( "esp32: %s:%u adapter: %p\n", __func__, __LINE__, adapter);
 		return -EINVAL;
 	}
 
@@ -851,7 +851,7 @@ static void esp_reset(void)
 	if (resetpin != HOST_GPIO_PIN_INVALID) {
 		/* Check valid GPIO or not */
 		if (!gpio_is_valid(resetpin)) {
-			printk(KERN_WARNING "%s, ESP32: host resetpin (%d) configured is invalid GPIO\n", __func__, resetpin);
+			printf("%s, ESP32: host resetpin (%d) configured is invalid GPIO\n", __func__, resetpin);
 			resetpin = HOST_GPIO_PIN_INVALID;
 		} else {
 			gpio_request(resetpin, "sysfs");
@@ -866,7 +866,7 @@ static void esp_reset(void)
 			/* HOST's resetpin set to INPUT */
 			gpio_direction_input(resetpin);
 
-			printk(KERN_DEBUG "%s, ESP32: Triggering ESP reset.\n", __func__);
+			printf("%s, ESP32: Triggering ESP reset.\n", __func__);
 		}
 	}
 }
