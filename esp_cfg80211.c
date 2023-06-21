@@ -22,7 +22,6 @@
 #include "esp_cfg80211.h"
 #include "esp_cmd.h"
 #include "esp_kernel_port.h"
-#include <stdio.h>
 
 /**
   * @brief WiFi PHY rate encodings

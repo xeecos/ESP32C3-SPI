@@ -22,7 +22,7 @@
 #include <linux/kernel.h>
 #include <linux/gpio.h>
 #include <linux/igmp.h>
-#include <stdio.h>
+#include <linux/printf.h>
 
 #include "esp.h"
 #include "esp_if.h"
