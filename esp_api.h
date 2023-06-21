@@ -26,7 +26,7 @@
 	do {                                                 \
 		int ret = (x);                                   \
         if (!!(ret)) {                                   \
-            printf( "esp32: %s failure, ret: %d\n", #x, ret);  \
+            printk(KERN_INFO  "esp32: %s failure, ret: %d\n", #x, ret);  \
             return ret;                                  \
         }                                                \
 	} while(0);                                          \

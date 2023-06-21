@@ -30,7 +30,7 @@ static int esp_read_byte(struct esp_sdio_context *context, u32 reg, u8 *data, u8
 	int ret;
 
 	if (!context || !context->func || !data) {
-		printf("%s: Invalid or incomplete arguments!\n", __func__);
+		printk(KERN_INFO "%s: Invalid or incomplete arguments!\n", __func__);
 		return -1;
 	}
 
@@ -53,7 +53,7 @@ static int esp_write_byte(struct esp_sdio_context *context, u32 reg, u8 data, u8
 	int ret;
 
 	if (!context || !context->func) {
-		printf("%s: Invalid or incomplete arguments!\n", __func__);
+		printk(KERN_INFO "%s: Invalid or incomplete arguments!\n", __func__);
 		return -1;
 	}
 
@@ -76,7 +76,7 @@ static int esp_read_multi_byte(struct esp_sdio_context *context, u32 reg, u8 *da
 	int ret;
 
 	if (!context || !context->func || !data) {
-		printf("%s: Invalid or incomplete arguments!\n", __func__);
+		printk(KERN_INFO "%s: Invalid or incomplete arguments!\n", __func__);
 		return -1;
 	}
 
@@ -99,7 +99,7 @@ static int esp_write_multi_byte(struct esp_sdio_context *context, u32 reg, u8 *d
 	int ret;
 
 	if (!context || !context->func || !data) {
-		printf("%s: Invalid or incomplete arguments!\n", __func__);
+		printk(KERN_INFO "%s: Invalid or incomplete arguments!\n", __func__);
 		return -1;
 	}
 
